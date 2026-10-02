@@ -604,6 +604,17 @@ function closeModal(id, event) {
     handlePaywallOverlayClick(event);
     return;
   }
+  // Prevent closing when user clicks outside the modal dialog (static backdrop)
+  if (event && event.target === document.getElementById(id)) {
+    const dialog = document.getElementById(id === 'toolModal' ? 'toolModalDialog' : (id + 'Dialog')) || document.querySelector(`#${id} .modal`);
+    if (dialog) {
+      dialog.classList.remove('modal-attention');
+      void dialog.offsetWidth; // retrigger reflow
+      dialog.classList.add('modal-attention');
+      setTimeout(() => dialog.classList.remove('modal-attention'), 350);
+    }
+    return;
+  }
   if (event && event.target !== document.getElementById(id)) return;
   const m = document.getElementById(id);
   if (m) m.classList.remove('open');
@@ -618,6 +629,16 @@ function closeModal(id, event) {
     }
   }
 }
+
+// Global Escape key listener to close modal safely
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const openModals = document.querySelectorAll('.modal-overlay.open');
+    openModals.forEach(m => {
+      closeModal(m.id);
+    });
+  }
+});
 
 // ================================================================
 // TOOL FORM HTML BUILDERS

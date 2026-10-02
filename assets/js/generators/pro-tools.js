@@ -1740,7 +1740,8 @@ dns,packet,warning cache full, discarding old records</textarea>
     `;
   }
 
-  function triggerGen(toolKey) {
+  function triggerGen(toolKey, opts) {
+    const silent = !!(opts && opts.silent);
     const t = proToolDefs[toolKey];
     if (!t) return;
 
@@ -1781,19 +1782,18 @@ dns,packet,warning cache full, discarding old records</textarea>
       if (toolKey === 'mikrotik-qr-code-generator') {
         renderQrPreview(values);
       }
-      // Special handling for Hotspot Login Page Maker: render initial preview
+      // Special handling for Hotspot Login Page Maker: render initial preview safely without recursion
       if (toolKey === 'hotspot-login-page-maker') {
-        const iframe = document.getElementById('pt_hs_live_iframe');
-        if (iframe) {
-          updateHotspotLivePreview();
-        }
+        renderHotspotLivePreview();
       }
 
-      showToast(`✅ PRO Script [${t.title}] berhasil digenerate!`, 'success');
+      if (!silent) {
+        showToast(`✅ PRO Script [${t.title}] berhasil digenerate!`, 'success');
+      }
     } catch(err) {
       const out = document.getElementById('pt_output');
       if (out) out.value = `# Error generating script: ${err.message}`;
-      showToast('❌ Error: ' + err.message, 'error');
+      if (!silent) showToast('❌ Error: ' + err.message, 'error');
     }
   }
 
@@ -2355,25 +2355,45 @@ function binl2hex(binarray){ var hex_tab = hexcase ? "0123456789ABCDEF" : "01234
 `;
   }
 
-  // Update live preview in iframe and script
-  function updateHotspotLivePreview() {
+  // Lightweight, debounced preview engine for Hotspot Login Page Maker
+  let hotspotDebounceTimer = null;
+
+  function renderHotspotLivePreview() {
     const iframe = document.getElementById('pt_hs_live_iframe');
-    if (iframe) {
+    if (!iframe) return;
+    try {
       let code = getHotspotHtmlCode();
       const css = getHotspotCssCode();
       // Inject css inline for iframe preview
       code = code.replace('<link rel="stylesheet" href="style.css">', `<style>${css}</style>`);
+      // Mock md5.js to avoid 404 network errors in iframe preview
+      code = code.replace('<script src="md5.js"></script>', '<script>window.hex_md5=function(s){return s;};</script>');
       // Replace template markers for live preview demo
       code = code.replace(/\$\(if error\)[\s\S]*?\$\(endif\)/g, '');
+      code = code.replace(/\$\(if chap-id\)[\s\S]*?\$\(endif\)/g, '');
+      code = code.replace(/\$\(chap-id\)/g, '');
+      code = code.replace(/\$\(chap-challenge\)/g, '');
       code = code.replace(/\$\(username\)/g, 'VOUCH-789');
       code = code.replace(/\$\(link-login-only\)/g, '#');
       code = code.replace(/\$\(link-orig\)/g, '#');
+      code = code.replace(/\$\(link-orig-esc\)/g, '#');
+      code = code.replace(/\$\(mac-esc\)/g, '00:11:22:33:44:55');
       code = code.replace(/\$\(if trial == 'yes'\)([\s\S]*?)\$\(endif\)/g, '$1');
       iframe.srcdoc = code;
+    } catch (e) {
+      console.warn('Hotspot preview render error:', e);
     }
+  }
 
-    // Refresh output script
-    triggerGen('hotspot-login-page-maker');
+  function updateHotspotLivePreview() {
+    if (hotspotDebounceTimer) {
+      clearTimeout(hotspotDebounceTimer);
+    }
+    hotspotDebounceTimer = setTimeout(() => {
+      renderHotspotLivePreview();
+      // Silent update script output without notification spam
+      triggerGen('hotspot-login-page-maker', { silent: true });
+    }, 120);
   }
 
   function switchHotspotTab(tab) {
@@ -2442,9 +2462,11 @@ TIPS:
 - CS WhatsApp bantuan: ${cfg.wa}
 ================================================================`;
 
-    if (typeof JSZip === 'function') {
+    const JSZipLib = (typeof JSZip !== 'undefined') ? JSZip : (typeof window !== 'undefined' ? window.JSZip : null);
+
+    if (JSZipLib) {
       try {
-        const zip = new JSZip();
+        const zip = new JSZipLib();
         const folder = zip.folder("hotspot");
         folder.file("login.html", loginHtml);
         folder.file("status.html", statusHtml);
@@ -2487,18 +2509,6 @@ TIPS:
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     showToast('📥 Berhasil mendownload login.html! Siap diupload ke folder hotspot router.', 'success');
-  }
-
-  function previewHotspotHtml() {
-    const code = getHotspotHtmlCode();
-    const win = window.open('', '_blank');
-    if (win) {
-      win.document.open();
-      win.document.write(code);
-      win.document.close();
-    } else {
-      showToast('Popup terblokir oleh browser. Izinkan pop-up untuk melihat live preview.', 'warning');
-    }
   }
 
   function previewHotspotHtml() {
