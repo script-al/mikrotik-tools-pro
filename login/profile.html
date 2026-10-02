@@ -1276,6 +1276,7 @@
           user = res.user;
           renderProfile(user);
           renderHeader(user);
+          showAlert('edit-success', '✅ Foto profil berhasil disimpan!', 'success');
         }
       };
       reader.readAsDataURL(file);

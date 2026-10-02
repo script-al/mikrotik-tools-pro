@@ -138,25 +138,45 @@
     // 1. Owner & Super Admin (Baharuddin / Bang-AL)
     const ownerEmail = "acm2lp21@gmail.com";
     const ownerUid   = "u_owner_acil";
-    users[ownerEmail] = {
-      uid:       ownerUid,
-      email:     ownerEmail,
-      name:      "Bang-AL (Owner)",
-      password:  _hash("Bismillah!"),
-      whatsapp:  "081355142432",
-      provider:  "email",
-      avatar:    "https://lh3.googleusercontent.com/a/ACg8ocIS0F6m6p_ComitOwner=s96-c",
-      verified:  true,
-      role:      "superadmin",
-      createdAt: users[ownerEmail]?.createdAt || _now(),
-    };
-    mems[ownerUid] = {
-      status:     "ACTIVE",
-      package:    "PRO LIFETIME / OWNER",
-      payDate:    "2024-01-01",
-      expireDate: null, // lifetime
-      notes:      "Aplikasi Owner / Pengembang Utama — Full Access Administrator",
-    };
+
+    if (!users[ownerEmail]) {
+      // First time initialization ONLY
+      users[ownerEmail] = {
+        uid:       ownerUid,
+        email:     ownerEmail,
+        name:      "Bang-AL (Owner)",
+        password:  _hash("Bismillah!"),
+        whatsapp:  "081355142432",
+        provider:  "email",
+        avatar:    "",
+        verified:  true,
+        role:      "superadmin",
+        createdAt: _now(),
+      };
+    } else {
+      // User exists — PRESERVE user's custom changes (name, avatar, whatsapp, password)!
+      users[ownerEmail].role = "superadmin";
+      if (!users[ownerEmail].uid) users[ownerEmail].uid = ownerUid;
+      if (users[ownerEmail].verified === undefined) users[ownerEmail].verified = true;
+      // Clean up legacy broken googleusercontent avatar url if present
+      if (users[ownerEmail].avatar && users[ownerEmail].avatar.includes("ACg8ocIS0F6m6p_ComitOwner")) {
+        users[ownerEmail].avatar = "";
+      }
+    }
+
+    if (!mems[ownerUid]) {
+      mems[ownerUid] = {
+        status:     "ACTIVE",
+        package:    "PRO LIFETIME / OWNER",
+        payDate:    "2024-01-01",
+        expireDate: null, // lifetime
+        notes:      "Aplikasi Owner / Pengembang Utama — Full Access Administrator",
+      };
+    } else {
+      mems[ownerUid].status = "ACTIVE";
+      mems[ownerUid].package = "PRO LIFETIME / OWNER";
+      mems[ownerUid].expireDate = null;
+    }
 
     // 2. Default Demo Admin
     const adminEmail = "admin@comit.id";
@@ -308,7 +328,7 @@
     if (!email) {
       /** @type {Record<string, { name: string, email: string, avatar: string }>} */
       const defaultProfiles = {
-        google:   { name: "Baharuddin / Bang-AL (Owner)", email: "acm2lp21@gmail.com", avatar: "https://lh3.googleusercontent.com/a/ACg8ocIS0F6m6p_ComitOwner=s96-c" },
+        google:   { name: "Bang-AL (Owner)", email: "acm2lp21@gmail.com", avatar: "" },
         facebook: { name: "Facebook User", email: "facebook.user@fb.com", avatar: "" },
         github:   { name: "GitHub User",   email: "github.user@github.com", avatar: "" },
       };
@@ -349,10 +369,18 @@
       };
       _save(MEM_KEY, mems);
     } else {
-      // Always refresh data from provider (real Google/GitHub photo)
       user.verified = true;
-      if (avatar) user.avatar = avatar;
-      if (name && (!user.name || user.name === "User")) user.name = name; 
+      // Only set avatar if user doesn't already have one, or if new verified photo provided from real provider
+      const isRealOAuth = Boolean(customData && customData.avatar && customData.verified);
+      if (avatar && (!user.avatar || isRealOAuth)) {
+        if (!avatar.includes("ACg8ocIS0F6m6p_ComitOwner")) {
+          user.avatar = avatar;
+        }
+      }
+      // Preserve custom name if already set
+      if (name && (!user.name || user.name === "User")) {
+        user.name = name;
+      } 
       if (email === "acm2lp21@gmail.com") {
         user.role = "superadmin";
         let mems = _load(MEM_KEY) || {};
@@ -846,3 +874,4 @@
     module.exports = Auth;
   }
 })(typeof self !== "undefined" ? self : (typeof window !== "undefined" ? window : globalThis));
+
