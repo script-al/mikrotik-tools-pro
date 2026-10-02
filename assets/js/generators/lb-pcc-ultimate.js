@@ -26,6 +26,8 @@ const LB_PCC = (function() {
       checkGateway = true,
       includeNat = true,
       includeAddrList = true,
+      includeBypassList = true,
+      clampMss = true,
       includeDns = true,
       dnsServers = '1.1.1.1,8.8.8.8',
       includeLoopback = false,
@@ -99,7 +101,7 @@ const LB_PCC = (function() {
 
     // ===================== FIREWALL ADDRESS LIST =====================
     if (includeAddrList) {
-      if (comment) out.push('# --- [5] Local Subnet Address List ---');
+      if (comment) out.push('# --- [5a] Local Subnet Address List ---');
       out.push('/ip firewall address-list');
       out.push('add list=LOCAL_SUBNET address=0.0.0.0/8 comment="RFC 1122 (IANA This Network)"');
       out.push('add list=LOCAL_SUBNET address=10.0.0.0/8 comment="RFC 1918 Private"');
@@ -114,6 +116,18 @@ const LB_PCC = (function() {
       out.push('');
     }
 
+    if (includeBypassList) {
+      if (comment) out.push('# --- [5b] Direct & Banking Bypass Address List ---');
+      out.push('/ip firewall address-list');
+      out.push('add list=BYPASS_PCC address=202.6.208.0/20 comment="BCA KlikPay & API"');
+      out.push('add list=BYPASS_PCC address=103.18.116.0/22 comment="Bank Mandiri Livin"');
+      out.push('add list=BYPASS_PCC address=103.3.68.0/22 comment="BRImo"');
+      out.push('add list=BYPASS_PCC address=103.247.116.0/22 comment="BNI"');
+      out.push('add list=BYPASS_PCC address=103.153.72.0/22 comment="Bank Syariah Indonesia"');
+      out.push('add list=BYPASS_PCC address=157.240.0.0/16 comment="WhatsApp / Meta Direct"');
+      out.push('');
+    }
+
     // ===================== MANGLE RULES =====================
     if (comment) out.push('# --- [6] Mangle Rules ---');
     out.push('/ip firewall mangle');
@@ -124,43 +138,54 @@ const LB_PCC = (function() {
     // Bypass local traffic
     out.push(`add chain=prerouting action=accept dst-address-list=LOCAL_SUBNET in-interface=${lanIface} comment="Bypass LAN to LAN Traffic"`);
 
+    // Bypass special destinations (banking & whatsapp)
+    if (includeBypassList) {
+      out.push(`add chain=prerouting action=accept dst-address-list=BYPASS_PCC in-interface=${lanIface} comment="Bypass PCC for Banking & WhatsApp"`);
+    }
+
+    // MSS Clamping
+    if (clampMss) {
+      out.push('add chain=forward protocol=tcp tcp-flags=syn action=change-mss new-mss=clamp-to-pmtu comment="Clamp TCP MSS to PMTU"');
+    }
+
     // Mark incoming connections from each WAN
     if (comment) out.push('# Mark-connection per ISP input');
     isps.forEach(isp => {
       out.push(`add chain=input in-interface=${isp.iface} action=mark-connection new-connection-mark=${connMark(isp)}_in passthrough=yes comment="Mark Input ${isp.name}"`);
-      if (rosVersion === 'v7' && (mode === 'LOCAL' || mode === 'HYBRID')) {
-        out.push(`add chain=output connection-mark=${connMark(isp)}_in action=mark-routing new-routing-mark=to_${safeName(isp.name)} passthrough=no comment="Route Reply ${isp.name}"`);
-      } else {
-        out.push(`add chain=output connection-mark=${connMark(isp)}_in action=mark-routing new-routing-mark=to_${safeName(isp.name)} passthrough=no comment="Route Reply ${isp.name}"`);
-      }
+      out.push(`add chain=output connection-mark=${connMark(isp)}_in action=mark-routing new-routing-mark=to_${safeName(isp.name)} passthrough=no comment="Route Reply ${isp.name}"`);
     });
 
     out.push('');
 
+    // Calculate weights & distribution
+    let totalWeight = 0;
+    const weights = isps.map(isp => {
+      const w = parseInt(isp.weight) || 1;
+      totalWeight += Math.max(1, w);
+      return Math.max(1, w);
+    });
+
     // PCC classification
-    if (comment) out.push('# PCC Classification — distribute connections across ISPs');
-    isps.forEach((isp, idx) => {
-      out.push(`add chain=prerouting dst-address-type=!local in-interface=${lanIface} action=mark-connection \\`);
-      out.push(`    per-connection-classifier=${pccClassifier}:${n}/${idx} new-connection-mark=${connMark(isp)} \\`);
-      out.push(`    passthrough=yes comment="PCC ${n}/${idx} -> ${isp.name}"`);
+    if (comment) out.push(`# PCC Classification — distribute connections across ISPs (Total Ratio: ${totalWeight})`);
+    let currentRemainder = 0;
+    isps.forEach((isp, ispIdx) => {
+      const w = weights[ispIdx];
+      for (let r = 0; r < w; r++) {
+        out.push(`add chain=prerouting dst-address-type=!local in-interface=${lanIface} action=mark-connection \\`);
+        out.push(`    per-connection-classifier=${pccClassifier}:${totalWeight}/${currentRemainder} new-connection-mark=${connMark(isp)} \\`);
+        out.push(`    passthrough=yes comment="PCC ${totalWeight}/${currentRemainder} -> ${isp.name}${w > 1 ? ` (Ratio ${r + 1}/${w})` : ''}"`);
+        currentRemainder++;
+      }
     });
 
     out.push('');
 
     // Apply routing marks
     if (comment) out.push('# Apply routing-mark from connection-mark');
-    if (rosVersion === 'v7' && (mode === 'LOCAL' || mode === 'HYBRID')) {
-      isps.forEach(isp => {
-        out.push(`add chain=prerouting in-interface=${lanIface} connection-mark=${connMark(isp)} action=mark-routing \\`);
-        out.push(`    new-routing-mark=to_${safeName(isp.name)} passthrough=no comment="Routing ${isp.name}"`);
-      });
-    } else {
-      // v6 style
-      isps.forEach(isp => {
-        out.push(`add chain=prerouting in-interface=${lanIface} connection-mark=${connMark(isp)} action=mark-routing \\`);
-        out.push(`    new-routing-mark=to_${safeName(isp.name)} passthrough=no comment="Routing ${isp.name}"`);
-      });
-    }
+    isps.forEach(isp => {
+      out.push(`add chain=prerouting in-interface=${lanIface} connection-mark=${connMark(isp)} action=mark-routing \\`);
+      out.push(`    new-routing-mark=to_${safeName(isp.name)} passthrough=no comment="Routing ${isp.name}"`);
+    });
 
     out.push('');
 

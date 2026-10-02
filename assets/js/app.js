@@ -406,6 +406,70 @@ function handlePaywallSubscribe() {
   openNavModal('price');
 }
 
+let isModalFullscreen = false;
+let currentModalSizeClass = 'modal-lg';
+
+function adjustModalSize(toolId) {
+  const dialog = document.getElementById('toolModalDialog');
+  if (!dialog) return;
+
+  isModalFullscreen = false;
+  dialog.classList.remove('modal-fullscreen', 'modal-sm', 'modal-md', 'modal-lg', 'modal-xl');
+  const icon = document.getElementById('modalExpandIcon');
+  if (icon) icon.className = 'fa-solid fa-expand';
+
+  let targetClass = 'modal-lg';
+
+  // 1. Official tools (download cards & specs) -> Compact modal-md
+  if (typeof OfficialTools !== 'undefined' && OfficialTools.officialList && OfficialTools.officialList[toolId]) {
+    targetClass = 'modal-md';
+  }
+  // 2. Extra large tools with rich split panes (LB PCC Ultimate, Hotspot Page Maker) -> modal-xl
+  else if (toolId === 'lb-pcc-ultimate' || toolId === 'hotspot-login-page-maker') {
+    targetClass = 'modal-xl';
+  }
+  // 3. Compact / minimal utility tools (1-2 fields or single click actions) -> modal-md
+  else if ([
+    'clear-dns-flush', 'clear-log-terminal', 'clear-hotspot-cookies',
+    'remove-arp-table', 'remove-dhcp-server-client', 'remove-dns',
+    'remove-all-counters', 'reset-all-counters', 'shutdown-reset-reboot',
+    'auto-reboot', 'bootloader-protector', 'anti-netcut', 'anti-ping-wan',
+    'block-access-modem', 'protect-btest-server', 'protect-mac-server',
+    'protect-neighbors-discovery', 'enable-fasttrack', 'drop-invalid-packets',
+    'drop-traceroute', 'interface-name-to-default', 'reset-mac-all-interfaces',
+    'remove-all-firewall', 'remove-all-queue', 'remove-all-hotspot',
+    'remove-all-ip-address', 'remove-all-ip-pool', 'remove-interface-bridge',
+    'remove-all-ppp', 'remove-all-routing', 'ping-tool', 'system-note-terminal',
+    'set-identity-router', 'setup-romon'
+  ].includes(toolId)) {
+    targetClass = 'modal-md';
+  }
+  // 4. Default for standard two-pane script generators -> modal-lg
+  else {
+    targetClass = 'modal-lg';
+  }
+
+  currentModalSizeClass = targetClass;
+  dialog.classList.add(targetClass);
+}
+
+function toggleModalFullscreen() {
+  const dialog = document.getElementById('toolModalDialog');
+  const icon = document.getElementById('modalExpandIcon');
+  if (!dialog) return;
+
+  isModalFullscreen = !isModalFullscreen;
+  if (isModalFullscreen) {
+    dialog.classList.remove('modal-sm', 'modal-md', 'modal-lg', 'modal-xl');
+    dialog.classList.add('modal-fullscreen');
+    if (icon) icon.className = 'fa-solid fa-compress';
+  } else {
+    dialog.classList.remove('modal-fullscreen');
+    dialog.classList.add(currentModalSizeClass || 'modal-lg');
+    if (icon) icon.className = 'fa-solid fa-expand';
+  }
+}
+
 // ================================================================
 // UNIVERSAL TOOL MODAL DISPATCHER
 // ================================================================
@@ -423,6 +487,8 @@ function openAnyTool(toolId, toolName) {
   const title = document.getElementById('toolModalTitle');
   const body = document.getElementById('toolModalBody');
   if (!modal || !body) return;
+
+  adjustModalSize(toolId);
 
   // 1. Check FastTools (60 Tools)
   if (typeof FastTools !== 'undefined' && FastTools.tools[toolId]) {
@@ -468,6 +534,8 @@ function openTool(toolId) {
   const title = document.getElementById('toolModalTitle');
   const body = document.getElementById('toolModalBody');
   if (!modal || !body) return;
+
+  adjustModalSize(toolId);
 
   const toolInfo = findTool(toolId);
   const iconMap = {
@@ -537,7 +605,18 @@ function closeModal(id, event) {
     return;
   }
   if (event && event.target !== document.getElementById(id)) return;
-  document.getElementById(id)?.classList.remove('open');
+  const m = document.getElementById(id);
+  if (m) m.classList.remove('open');
+  if (id === 'toolModal') {
+    const dialog = document.getElementById('toolModalDialog');
+    if (dialog) {
+      dialog.classList.remove('modal-fullscreen');
+      dialog.classList.add(currentModalSizeClass || 'modal-lg');
+      isModalFullscreen = false;
+      const icon = document.getElementById('modalExpandIcon');
+      if (icon) icon.className = 'fa-solid fa-expand';
+    }
+  }
 }
 
 // ================================================================
@@ -636,6 +715,8 @@ function formLBPCCUltimate() {
         <label class="form-check"><input type="checkbox" id="pccCheckGw" checked> Check-Gateway (ping)</label>
         <label class="form-check"><input type="checkbox" id="pccNat" checked> Include NAT Masquerade</label>
         <label class="form-check"><input type="checkbox" id="pccAddrList" checked> Include Address List (Bogon)</label>
+        <label class="form-check"><input type="checkbox" id="pccBypassList" checked> Bypass Direct Traffic (BYPASS_PCC Banking/WA)</label>
+        <label class="form-check"><input type="checkbox" id="pccClampMss" checked> Clamp MSS to PMTU (Cegah MTU drop)</label>
         <label class="form-check"><input type="checkbox" id="pccDns" checked> Configure DNS</label>
         <label class="form-check"><input type="checkbox" id="pccDhcp"> Include DHCP Server</label>
         <div class="form-group mt-2 mb-0">
@@ -732,14 +813,18 @@ function renderISPRows() {
         </div>
       </div>
       <div class="form-row mt-2">
-        <div class="form-group mb-0">
+        <div class="form-group mb-0" style="flex:1">
+          <label class="form-label">Ratio / Weight (1-10)</label>
+          <input type="number" min="1" max="10" class="form-control form-control-mono" id="isp${i}_weight" value="1" placeholder="1">
+        </div>
+        <div class="form-group mb-0" style="flex:1">
           <label class="form-label">IP/Mask (opsional)</label>
           <input class="form-control form-control-mono" id="isp${i}_ip" value="" placeholder="192.168.1.2/24">
         </div>
-        <div class="form-group mb-0">
-          <label class="form-label">Check IP (Recursive)</label>
-          <input class="form-control form-control-mono" id="isp${i}_checkip" value="${checkIps[i]}" placeholder="8.8.8.8">
-        </div>
+      </div>
+      <div class="form-group mb-0 mt-2">
+        <label class="form-label">Check IP (Recursive)</label>
+        <input class="form-control form-control-mono" id="isp${i}_checkip" value="${checkIps[i]}" placeholder="8.8.8.8">
       </div>
     </div>`;
   }
@@ -773,7 +858,8 @@ function runPCCUltimate() {
       iface: document.getElementById(`isp${i}_iface`)?.value || `ether${i+1}`,
       gateway: document.getElementById(`isp${i}_gw`)?.value || `192.168.${i+1}.1`,
       ip: document.getElementById(`isp${i}_ip`)?.value || '',
-      checkIp: document.getElementById(`isp${i}_checkip`)?.value || ''
+      checkIp: document.getElementById(`isp${i}_checkip`)?.value || '',
+      weight: parseInt(document.getElementById(`isp${i}_weight`)?.value) || 1
     });
   }
 
@@ -790,6 +876,8 @@ function runPCCUltimate() {
     checkGateway: document.getElementById('pccCheckGw')?.checked,
     includeNat: document.getElementById('pccNat')?.checked,
     includeAddrList: document.getElementById('pccAddrList')?.checked,
+    includeBypassList: document.getElementById('pccBypassList')?.checked,
+    clampMss: document.getElementById('pccClampMss')?.checked,
     includeDns: document.getElementById('pccDns')?.checked,
     includeDhcp: document.getElementById('pccDhcp')?.checked,
     dnsServers: document.getElementById('pccDnsServers')?.value || '1.1.1.1,8.8.8.8',
@@ -3808,7 +3896,8 @@ function getFallbackData() {
   return {
     categories: [
       { id:'lb', name:'Load Balancing', icon:'fa-network-wired', color:'orange', tools:[
-        { id:'lb-pcc-ultimate', name:'LB PCC ULTIMATE', desc:'Generator PCC 2-15 ISP', icon:'fa-network-wired', badge:'ULTIMATE', badgeClass:'badge-orange', version:'both', tier:'pro', new:true }
+        { id:'lb-pcc-ultimate', name:'LB PCC ULTIMATE', desc:'Generator PCC 2-15 ISP (Bandwidth Ratio & Bypass)', icon:'fa-network-wired', badge:'PRO ULTIMATE', badgeClass:'badge-orange', version:'both', tier:'pro', new:true },
+        { id:'address-list-generator', name:'Address-List Ultimate', desc:'Daftar IP BOGON, Sosmed, Banking, & RAW', icon:'fa-list-check', badge:'PRO', badgeClass:'badge-orange', version:'both', tier:'pro', new:true }
       ]},
       { id:'queue', name:'Queue & Bandwidth', icon:'fa-chart-bar', color:'teal', tools:[
         { id:'queue-burst', name:'Queue & Burst', desc:'Rate Limit Calculator', icon:'fa-tachometer-alt', badge:'FREE', badgeClass:'badge-free', version:'both', tier:'free', new:true },

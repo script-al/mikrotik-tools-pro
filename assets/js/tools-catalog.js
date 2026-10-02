@@ -14,7 +14,8 @@ const ToolsCatalog = {
       icon: 'fa-star',
       color: 'orange',
       tools: [
-        { id: 'lb-pcc-ultimate', name: 'LB PCC ULTIMATE Generator', desc: 'Load balancing 2 s/d 15 ISP dengan mode LOCAL, RECURSIVE, dan HYBRID untuk RouterOS v6 & v7.', icon: 'fa-network-wired', badge: 'ULTIMATE', star: true, version: 'both' },
+        { id: 'lb-pcc-ultimate', name: 'LB PCC ULTIMATE Generator', desc: 'Load balancing 2 s/d 15 ISP dengan mode LOCAL, RECURSIVE, HYBRID, Bandwidth Ratio, & Address-List Bypass.', icon: 'fa-network-wired', badge: 'PRO ULTIMATE', star: true, version: 'both', tier: 'pro' },
+        { id: 'address-list-generator', name: 'Address-List Ultimate Generator', desc: 'Generate daftar IP BOGON, Sosmed, Streaming, Game Online, Banking/Fintech, atau Custom dengan target RAW, Filter, dan Mangle.', icon: 'fa-list-check', badge: 'PRO', star: true, version: 'both', tier: 'pro' },
         { id: 'queue-burst', name: 'Queue & Burst Rate Calculator', desc: 'Hitung Max Limit, Burst Limit, Burst Threshold, dan Limit At secara akurat dengan live preview.', icon: 'fa-gauge-high', badge: 'PRO', star: true, version: 'both' },
         { id: 'pon-calc', name: 'Kalkulator PON Pro (Full Ratio)', desc: 'Kalkulasi split ratio 1:4 hingga 1:128, bandwidth per ONT, CIR, MIR, dan Queue Tree otomatis.', icon: 'fa-tower-cell', badge: 'NEW', star: true, version: 'both' },
         { id: 'hotspot-login-page-maker', name: 'Hotspot Login Page Maker', desc: 'Desain dan generate template login hotspot modern, responsive, dan ringan untuk MikroTik.', icon: 'fa-palette', badge: 'FREE', star: true, version: 'both' },
@@ -40,7 +41,8 @@ const ToolsCatalog = {
       icon: 'fa-network-wired',
       color: 'teal',
       tools: [
-        { id: 'lb-pcc-ultimate', name: 'LB PCC ULTIMATE (2-15 ISP)', desc: 'Mangle PCC lengkap dengan classifier both-addresses-and-ports, routing table v7, dan failover.', icon: 'fa-network-wired', badge: 'ULTIMATE', version: 'both' },
+        { id: 'lb-pcc-ultimate', name: 'LB PCC ULTIMATE (2-15 ISP)', desc: 'Mangle PCC lengkap dengan classifier both-addresses-and-ports, Bandwidth Ratio, routing table v7, dan failover.', icon: 'fa-network-wired', badge: 'PRO ULTIMATE', version: 'both', tier: 'pro' },
+        { id: 'address-list-generator', name: 'Address-List Ultimate Generator', desc: 'Generate Address-List IP untuk pemisahan traffic, bypass PCC, RAW drop, dan routing khusus.', icon: 'fa-list-check', badge: 'PRO', version: 'both', tier: 'pro' },
         { id: 'starlink-lb-pcc', name: 'Starlink Load Balancing PCC', desc: 'Khusus Starlink + ISP Fiber dengan MSS clamping 1420 dan penanganan fluktuasi latency.', icon: 'fa-satellite', badge: 'PRO', version: 'both' },
         { id: 'lb-nth', name: 'Load Balancing NTH Round-Robin', desc: 'Distribusi paket round-robin NTH untuk traffic browsing berkecepatan tinggi.', icon: 'fa-arrows-split-up-and-left', badge: 'PRO', version: 'both' },
         { id: 'lb-ecmp', name: 'Load Balancing ECMP Multi-Gateway', desc: 'Equal-Cost Multi-Path dengan check-gateway ping pada default route.', icon: 'fa-code-branch', badge: 'FREE', version: 'both' },
@@ -95,6 +97,7 @@ const ToolsCatalog = {
       color: 'rose',
       tools: [
         { id: 'firewall', name: 'Firewall Security Hardening Pro', desc: 'Filter komprehensif: anti-DDoS, port scan detector, bogon filter, dan proteksi router.', icon: 'fa-shield-halved', badge: 'FREE', version: 'both' },
+        { id: 'address-list-generator', name: 'Address-List Ultimate Generator', desc: 'Daftar IP BOGON/Martians, proteksi RAW drop 0% CPU, dan rule isolasi subnet.', icon: 'fa-list-check', badge: 'PRO', version: 'both', tier: 'pro' },
         { id: 'anti-hack-mikrotik', name: 'Anti Hack Security Lockdown', desc: 'Nonaktifkan service rentan (telnet, ftp, www, api) dan ubah port SSH/Winbox.', icon: 'fa-user-lock', badge: 'FREE', version: 'both' },
         { id: 'anti-ddos-attacks', name: 'Anti SYN & UDP Flood DDoS', desc: 'Batasi laju koneksi SYN dan blacklist otomatis IP penyerang DDoS.', icon: 'fa-shield-virus', badge: 'FREE', version: 'both' },
         { id: 'anti-netcut', name: 'Anti Netcut (ARP Reply-Only)', desc: 'Kunci tabel ARP menjadi reply-only untuk mencegah pemutusan koneksi oleh Netcut.', icon: 'fa-scissors', badge: 'FREE', version: 'both' },

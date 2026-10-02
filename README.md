@@ -94,3 +94,53 @@ Akun demo: admin@comit.id / admin123 (PRO Lifetime, ACTIVE)
 
 Buka: http://localhost/mikrotik-tools-pro/
 ```
+
+
+Penyebab Mengapa Profil Sebelumnya Tidak Tersimpan
+
+Masalah tersebut terjadi karena fungsi inisialisasi awal (_seedDefaults) di assets/js/auth.js berjalan otomatis setiap kali halaman dimuat ulang (refresh atau pindah antar halaman):
+
+Tertimpa Nilai Default Otomatis: Ketika Anda mengubah nama/WhatsApp atau mengunggah foto profil di profile.html lalu menekan Save Changes, data tersebut sebenarnya berhasil disimpan ke localStorage.
+Namun, begitu Anda mengklik Back to Tools (Home) atau me-refresh halaman, berkas assets/js/auth.js dijalankan kembali. Di dalam fungsi _seedDefaults(), terdapat kode:
+
+javascript
+// Kode lama: Tidak mengecek apakah akun sudah ada/diedit
+users[ownerEmail] = {
+  name: "Bang-AL (Owner)",
+  whatsapp: "081355142432",
+  avatar: "https://lh3.googleusercontent.com/a/ACg8ocIS0F6m6p_ComitOwner=s96-c",
+  // ...
+};
+
+Kode di atas menimpa (overwrite) data profil dan foto yang baru saja Anda simpan, mengembalikannya ke nilai bawaan.
+
+Avatar di Navbar Berubah Menjadi Inisial [B]: URL avatar bawaan sebelumnya (lh3.googleusercontent.com...) mengembalikan kode error HTTP 400 (Bad Request) dari server Google. Akibatnya, browser gagal memuat gambar dan otomatis memicu onerror="this.parentElement.textContent='B'", sehingga di halaman utama hanya muncul huruf B oranye.
+
+Solusi & Perbaikan yang Telah Diterapkan
+
+Menjaga Data Profil Pengguna (Preserve Profile): Fungsi _seedDefaults() di assets/js/auth.js kini telah diperbaiki dengan pengecekan if (!users[ownerEmail]).
+
+Akun hanya diinisialisasi saat pertama kali aplikasi dibuka dalam kondisi kosong.
+Jika akun Anda sudah ada, sistem TIDAK AKAN PERNAH menimpa nama, WhatsApp, password, ataupun foto avatar yang telah Anda simpan.
+URL foto lama yang rusak (400 Bad Request) dibersihkan secara otomatis.
+
+Proteksi Avatar saat Login Sosial: Pada fungsi socialLogin(), foto hasil unggahan lokal (custom uploaded avatar) tidak akan lagi tertimpa oleh foto placeholder kosong.
+
+Notifikasi Upload Foto: Saat Anda mengklik kamera dan mengunggah foto profil di halaman profil, notifikasi sukses hijau (✅ Foto profil berhasil disimpan!) akan langsung muncul sebagai konfirmasi.
+
+Hasil Pengujian & Sinkronisasi GitHub
+Simulasi Uji Simpan & Reload:
+text
+Logged in user: Bang-AL (Owner) acm2lp21@gmail.com
+Update result: true Bang-AL / Baharuddin (Super Admin)
+After page reload user:
+  Name: Bang-AL / Baharuddin (Super Admin)
+  WhatsApp: 081355142432
+  Avatar: data:image/jpeg;base64,TESTAVATAR
+🎉 SUCCESS: Profile changes successfully preserved across page reloads!
+Sudah Ter-push ke GitHub: Semua perbaikan di atas telah di-commit dan di-push ke repositori GitHub Anda:
+👉 Repository: https://github.com/script-al/mikrotik-tools-pro
+
+👉 Live Pages: https://script-al.github.io/mikrotik-tools-pro/
+
+Sekarang Anda dapat mengubah nama, nomor WhatsApp, atau foto avatar di halaman Profile dan menekan Save Changes — data akan tersimpan permanen dan tetap tampil saat Anda berpindah ke halaman utama maupun saat me-refresh browser.

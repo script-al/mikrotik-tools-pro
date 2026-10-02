@@ -247,10 +247,15 @@
 
 <!-- Tool Generator Modal -->
 <div class="modal-overlay" id="toolModal" onclick="closeModal('toolModal',event)">
-  <div class="modal modal-fullscreen" onclick="event.stopPropagation()">
+  <div class="modal modal-lg" id="toolModalDialog" onclick="event.stopPropagation()">
     <div class="modal-header">
       <div class="modal-title" id="toolModalTitle"><i class="fa-solid fa-bolt text-orange"></i> Generator</div>
-      <button class="modal-close" onclick="closeModal('toolModal')"><i class="fa-solid fa-xmark"></i></button>
+      <div style="display:flex;align-items:center;gap:6px">
+        <button type="button" class="btn btn-secondary btn-xs" onclick="toggleModalFullscreen()" id="btnModalExpand" title="Perbesar / Perkecil Ukuran Jendela" style="padding:5px 9px;border-radius:6px;font-size:11px;background:rgba(255,255,255,0.06);border:1px solid var(--border-color);color:var(--text-secondary);cursor:pointer">
+          <i class="fa-solid fa-expand" id="modalExpandIcon"></i>
+        </button>
+        <button class="modal-close" onclick="closeModal('toolModal')" title="Tutup (Esc)"><i class="fa-solid fa-xmark"></i></button>
+      </div>
     </div>
     <div class="modal-body" id="toolModalBody" style="padding:0">
       <!-- Injected by JS -->

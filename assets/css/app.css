@@ -976,9 +976,12 @@ select.form-control {
   flex-shrink: 0;
 }
 
-/* --- Modal Large (for generators) --- */
-.modal.modal-xl { max-width: 1200px; }
-.modal.modal-fullscreen { max-width: 95vw; height: 92vh; max-height: 92vh; }
+/* --- Modal Sizing Classes (Adaptive & Responsive) --- */
+.modal.modal-sm { max-width: 520px; }
+.modal.modal-md { max-width: 680px; }
+.modal.modal-lg { max-width: 1040px; }
+.modal.modal-xl { max-width: 1240px; }
+.modal.modal-fullscreen { max-width: 96vw; height: 94vh; max-height: 94vh; }
 
 /* --- Toast Notification --- */
 #toast-container {

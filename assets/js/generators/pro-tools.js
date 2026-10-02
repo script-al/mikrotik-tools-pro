@@ -1377,6 +1377,225 @@ dns,packet,warning cache full, discarding old records</textarea>
           `add host=1.1.1.1 interval=15s timeout=2s down-script=":log error \\"ISP 2 DOWN\\"" up-script=":log info \\"ISP 2 UP\\""\n` +
           `:put "Multi-host netwatch watchdog active."\n`;
       }
+    },
+
+    // 22. Address-List Ultimate Generator
+    'address-list-generator': {
+      title: 'Address-List Ultimate Generator',
+      renderForm: function() {
+        return `
+          <div class="config-section">
+            <div class="config-section-title"><i class="fa-solid fa-list-check text-orange"></i> Kategori Preset Address-List</div>
+            <div class="form-group">
+              <label class="form-label">Pilih Kategori IP / Preset</label>
+              <select class="form-control" id="pt_al_preset" onchange="ProTools.onAddressListCategoryChange(this.value)">
+                <option value="bogon">BOGON & Martians (RFC 1918, RFC 6598, Multicast, Reserved)</option>
+                <option value="social">Media Sosial (TikTok, YouTube, Meta/IG, WA, Telegram)</option>
+                <option value="streaming">Video Streaming & CDN (Netflix, Disney+, Cloudflare)</option>
+                <option value="gaming">Game Online Populer (MLBB, FF, PUBG, Valorant, Steam)</option>
+                <option value="banking">Bank & FinTech Indonesia (BCA, Mandiri, BRI, BNI, GoPay, Dana)</option>
+                <option value="custom">Custom Bulk IP / Subnet List (Manual Paste)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nama Address-List</label>
+              <input class="form-control form-control-mono" id="pt_al_name" value="BOGON_IPS" oninput="ProTools.triggerGen('address-list-generator')">
+            </div>
+
+            <div class="form-group" id="pt_al_custom_wrap" style="display:none">
+              <label class="form-label">Daftar IP / Subnet (1 per baris)</label>
+              <textarea class="form-control form-control-mono" id="pt_al_custom_ips" rows="5" oninput="ProTools.triggerGen('address-list-generator')" placeholder="192.168.10.0/24&#10;10.20.0.0/16&#10;203.0.113.5"></textarea>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Dapat berupa IP tunggal (x.x.x.x) atau subnet CIDR (/24, /16, dsb).</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Target Integrasi Firewall</label>
+              <select class="form-control" id="pt_al_target" onchange="ProTools.triggerGen('address-list-generator')">
+                <option value="only_list">Hanya Address-List (/ip firewall address-list)</option>
+                <option value="raw_drop">Address-List + RAW Drop Rule (Proteksi 0% CPU)</option>
+                <option value="filter_drop">Address-List + Filter Input & Forward Drop</option>
+                <option value="mangle_route">Address-List + Mangle Mark-Routing (Pisah Traffic)</option>
+                <option value="mangle_qos">Address-List + Mangle Mark-Packet (Queue Tree)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Timeout Address-List</label>
+              <select class="form-control" id="pt_al_timeout" onchange="ProTools.triggerGen('address-list-generator')">
+                <option value="none">Permanent (Tanpa Timeout)</option>
+                <option value="1d">1 Hari (1d)</option>
+                <option value="7d">7 Hari (7d)</option>
+                <option value="30d">30 Hari (30d)</option>
+              </select>
+            </div>
+
+            <div class="form-group mb-0" id="pt_al_route_wrap">
+              <label class="form-label">Routing Mark Name (Bila menggunakan Mangle Routing)</label>
+              <input class="form-control form-control-mono" id="pt_al_routing_mark" value="to_ISP2" oninput="ProTools.triggerGen('address-list-generator')">
+            </div>
+          </div>
+        `;
+      },
+      generate: function(v, ros) {
+        const preset = v.al_preset || 'bogon';
+        let listName = (v.al_name || 'BOGON_IPS').trim();
+        const target = v.al_target || 'only_list';
+        const timeout = v.al_timeout || 'none';
+        const rMark = (v.al_routing_mark || 'to_ISP2').trim();
+        const isV7 = ros === 'v7';
+
+        const timeoutAttr = (timeout && timeout !== 'none') ? ` timeout=${timeout}` : '';
+
+        let ipEntries = [];
+        let desc = '';
+
+        if (preset === 'bogon') {
+          desc = 'BOGON & Martians Address List (Anti Spoofing & Invalid IP)';
+          ipEntries = [
+            { ip: '0.0.0.0/8', c: 'RFC 1122 This Network' },
+            { ip: '10.0.0.0/8', c: 'RFC 1918 Private Network' },
+            { ip: '100.64.0.0/10', c: 'RFC 6598 Carrier-Grade NAT (CGNAT)' },
+            { ip: '127.0.0.0/8', c: 'RFC 5735 Loopback' },
+            { ip: '169.254.0.0/16', c: 'RFC 3927 Link-Local / APIPA' },
+            { ip: '172.16.0.0/12', c: 'RFC 1918 Private Network' },
+            { ip: '192.0.0.0/24', c: 'RFC 5736 IETF Protocol' },
+            { ip: '192.0.2.0/24', c: 'RFC 5737 TEST-NET-1' },
+            { ip: '192.168.0.0/16', c: 'RFC 1918 Private Network' },
+            { ip: '198.18.0.0/15', c: 'RFC 2544 Network Interconnect' },
+            { ip: '198.51.100.0/24', c: 'RFC 5737 TEST-NET-2' },
+            { ip: '203.0.113.0/24', c: 'RFC 5737 TEST-NET-3' },
+            { ip: '224.0.0.0/4', c: 'RFC 3171 Multicast' },
+            { ip: '240.0.0.0/4', c: 'RFC 1112 Reserved / Future Use' },
+            { ip: '255.255.255.255/32', c: 'Limited Broadcast' }
+          ];
+        } else if (preset === 'social') {
+          desc = 'Social Media & Messaging IP Ranges (TikTok, YouTube, Meta, WhatsApp, Telegram)';
+          ipEntries = [
+            { ip: '157.240.0.0/16', c: 'Meta / WhatsApp / Instagram' },
+            { ip: '31.13.64.0/18', c: 'Facebook Infrastructure' },
+            { ip: '179.60.192.0/22', c: 'Meta Edge CDN' },
+            { ip: '185.89.216.0/22', c: 'WhatsApp Voice & Media' },
+            { ip: '91.108.4.0/22', c: 'Telegram Core DC' },
+            { ip: '91.108.8.0/22', c: 'Telegram Messenger' },
+            { ip: '91.108.56.0/22', c: 'Telegram CDN' },
+            { ip: '149.154.160.0/20', c: 'Telegram IPv4 Subnet' },
+            { ip: '161.117.0.0/16', c: 'TikTok ByteDance AS' },
+            { ip: '130.44.0.0/16', c: 'TikTok Global Edge' },
+            { ip: '143.204.0.0/16', c: 'CloudFront TikTok CDN' },
+            { ip: '172.217.0.0/16', c: 'Google / YouTube Core' },
+            { ip: '142.250.0.0/15', c: 'YouTube Video Streaming' },
+            { ip: '216.58.192.0/19', c: 'Google Video Cache (GGC)' },
+            { ip: '104.244.42.0/21', c: 'Twitter / X Media' }
+          ];
+        } else if (preset === 'streaming') {
+          desc = 'Video Streaming & Content Delivery Networks (Netflix, Disney+, Cloudflare)';
+          ipEntries = [
+            { ip: '23.246.0.0/18', c: 'Netflix Open Connect CDN' },
+            { ip: '37.77.184.0/21', c: 'Netflix Streaming' },
+            { ip: '45.57.0.0/17', c: 'Netflix Video Delivery' },
+            { ip: '64.120.128.0/17', c: 'Netflix Edge' },
+            { ip: '108.175.32.0/20', c: 'Netflix Video Cache' },
+            { ip: '198.38.96.0/19', c: 'Netflix OCA' },
+            { ip: '198.45.48.0/20', c: 'Netflix CDN Nodes' },
+            { ip: '104.16.0.0/13', c: 'Cloudflare Proxy CDN' },
+            { ip: '172.64.0.0/13', c: 'Cloudflare Anycast' },
+            { ip: '103.21.244.0/22', c: 'Cloudflare APAC Edge' }
+          ];
+        } else if (preset === 'gaming') {
+          desc = 'Online Games Server CIDR (MLBB, Free Fire, PUBG Mobile, Valorant, Steam)';
+          ipEntries = [
+            { ip: '161.117.0.0/16', c: 'Mobile Legends Moonton Cloud' },
+            { ip: '101.32.0.0/16', c: 'MLBB Asia Matchmaking' },
+            { ip: '43.156.0.0/16', c: 'MLBB Tencent Cloud Relay' },
+            { ip: '203.205.128.0/18', c: 'Free Fire Garena AS' },
+            { ip: '103.254.152.0/22', c: 'Free Fire Match Server' },
+            { ip: '49.51.0.0/16', c: 'PUBG Mobile Game Server' },
+            { ip: '119.28.0.0/16', c: 'PUBG Mobile SEA Cluster' },
+            { ip: '162.249.72.0/22', c: 'Valorant Riot Games AS' },
+            { ip: '192.64.168.0/22', c: 'Valorant SEA Gateway' },
+            { ip: '153.254.86.0/24', c: 'Steam / Dota 2 Singapore' },
+            { ip: '162.254.192.0/21', c: 'Valve Game Routing' }
+          ];
+        } else if (preset === 'banking') {
+          desc = 'Indonesian Online Banking, QRIS & FinTech (BCA, Mandiri, BRI, BNI, GoPay, Dana)';
+          ipEntries = [
+            { ip: '202.6.208.0/20', c: 'Bank Central Asia (BCA)' },
+            { ip: '202.158.88.0/22', c: 'BCA KlikPay & API' },
+            { ip: '103.18.116.0/22', c: 'Bank Mandiri Livin' },
+            { ip: '202.138.224.0/20', c: 'Mandiri Payment Host' },
+            { ip: '103.3.68.0/22', c: 'Bank Rakyat Indonesia (BRImo)' },
+            { ip: '118.97.80.0/20', c: 'BRI Core Gateway' },
+            { ip: '103.247.116.0/22', c: 'Bank Negara Indonesia (BNI)' },
+            { ip: '103.153.72.0/22', c: 'Bank Syariah Indonesia (BSI)' },
+            { ip: '103.247.16.0/22', c: 'GoPay / Gojek Payment' },
+            { ip: '103.111.236.0/22', c: 'OVO Payment System' },
+            { ip: '103.126.116.0/22', c: 'DANA Digital Wallet' }
+          ];
+        } else {
+          // Custom
+          desc = 'Custom User-Defined Subnet & IP Address List';
+          const lines = (v.al_custom_ips || '').split('\n').map(l => l.trim()).filter(Boolean);
+          if (lines.length === 0) {
+            lines.push('192.168.10.0/24', '10.20.0.0/16', '172.31.0.0/16');
+          }
+          ipEntries = lines.map((line, idx) => ({ ip: line, c: `Custom IP Entry ${idx+1}` }));
+        }
+
+        let out = banner(`Address-List Generator — ${listName}`, ros);
+        out += `# Deskripsi : ${desc}\n` +
+               `# Target    : ${target}\n` +
+               `# Total IP  : ${ipEntries.length} entri\n` +
+               `# Timeout   : ${timeout}\n\n`;
+
+        out += `# ================================================================\n` +
+               `# 1. Tambahkan Address-List\n` +
+               `# ================================================================\n` +
+               `/ip firewall address-list\n`;
+
+        ipEntries.forEach(item => {
+          out += `add list="${listName}" address=${item.ip}${timeoutAttr} comment="${item.c}"\n`;
+        });
+        out += `\n`;
+
+        // Optional Firewall integration rules
+        if (target === 'raw_drop') {
+          out += `# ================================================================\n` +
+                 `# 2. RAW Table Drop Rule (Anti Bogon / Zero-CPU Defense)\n` +
+                 `# ================================================================\n` +
+                 `/ip firewall raw\n` +
+                 `add chain=prerouting src-address-list="${listName}" action=drop comment="Drop ${listName} (RAW Zero CPU)"\n` +
+                 `add chain=prerouting dst-address-list="${listName}" action=drop comment="Drop Dest ${listName} (RAW)"\n\n`;
+        } else if (target === 'filter_drop') {
+          out += `# ================================================================\n` +
+                 `# 2. Filter Filter Rule Drop\n` +
+                 `# ================================================================\n` +
+                 `/ip firewall filter\n` +
+                 `add chain=input src-address-list="${listName}" action=drop comment="Drop Input from ${listName}"\n` +
+                 `add chain=forward src-address-list="${listName}" action=drop comment="Drop Forward from ${listName}"\n\n`;
+        } else if (target === 'mangle_route') {
+          out += `# ================================================================\n` +
+                 `# 2. Mangle Routing Mark untuk Pemisahan Traffic (${rMark})\n` +
+                 `# ================================================================\n`;
+          if (isV7) {
+            out += `/routing table add disabled=no fib name=${rMark} comment="Routing Table ${rMark}"\n` +
+                   `/ip firewall mangle add chain=prerouting dst-address-list="${listName}" action=mark-routing new-routing-mark=${rMark} passthrough=no comment="Route ${listName} via ${rMark}"\n\n`;
+          } else {
+            out += `/ip firewall mangle add chain=prerouting dst-address-list="${listName}" action=mark-routing new-routing-mark=${rMark} passthrough=no comment="Route ${listName} via ${rMark}"\n\n`;
+          }
+        } else if (target === 'mangle_qos') {
+          out += `# ================================================================\n` +
+                 `# 2. Mangle Packet Mark untuk Queue Tree QoS\n` +
+                 `# ================================================================\n` +
+                 `/ip firewall mangle\n` +
+                 `add chain=forward dst-address-list="${listName}" action=mark-packet new-packet-mark=PKT_${listName} passthrough=no comment="Mark Packet ${listName}"\n\n`;
+        }
+
+        out += `:log info "✅ Address-List [${listName}] (${ipEntries.length} entri) berhasil dipasang."\n` +
+               `:put "Address-List [${listName}] siap digunakan di Firewall / Mangle RouterOS."\n`;
+
+        return out;
+      }
     }
   };
 
@@ -2340,10 +2559,33 @@ TIPS:
     showToast('📥 Berhasil mendownload file QR SVG!', 'success');
   }
 
+  function onAddressListCategoryChange(preset) {
+    const customWrap = document.getElementById('pt_al_custom_wrap');
+    const nameInput = document.getElementById('pt_al_name');
+    if (customWrap) {
+      customWrap.style.display = (preset === 'custom') ? 'block' : 'none';
+    }
+    if (nameInput) {
+      const presetNames = {
+        bogon: 'BOGON_IPS',
+        social: 'SOCIAL_MEDIA',
+        streaming: 'STREAMING_CDN',
+        gaming: 'ONLINE_GAMES',
+        banking: 'BANKING_ID',
+        custom: 'CUSTOM_IPS'
+      };
+      if (presetNames[preset]) {
+        nameInput.value = presetNames[preset];
+      }
+    }
+    triggerGen('address-list-generator');
+  }
+
   return {
     proToolDefs,
     getModalHTML,
     triggerGen,
+    onAddressListCategoryChange,
     toggleQrFields,
     setAiPrompt,
     setLogSample,
