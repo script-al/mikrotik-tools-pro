@@ -1,0 +1,100 @@
+# ==============================================================================
+# DAFTAR PORT GAME ONLINE & SCRIPT MIKROTIK QOS PRIORITAS (ROUTEROS v6 & v7)
+# ComitTools Pro - Network Engineer & RT/RW Net Suite
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. MOBILE LEGENDS: BANG BANG (MLBB)
+# ------------------------------------------------------------------------------
+# TCP : 5000-5221, 5228, 5242, 5328, 5508, 5509, 5601-5603, 9000-9010
+# UDP : 5000-5221, 5228, 5242, 5328, 5508, 5509, 5601-5603, 9000-9010, 30000-30250
+
+/ip firewall mangle
+add chain=prerouting action=mark-connection protocol=tcp dst-port=5000-5221,5228,5242,5328,5508,5509,5601-5603,9000-9010 new-connection-mark=CONN_MLBB passthrough=yes comment="Game - Mobile Legends TCP"
+add chain=prerouting action=mark-connection protocol=udp dst-port=5000-5221,5228,5242,5328,5508,5509,5601-5603,9000-9010,30000-30250 new-connection-mark=CONN_MLBB passthrough=yes comment="Game - Mobile Legends UDP"
+add chain=prerouting action=mark-packet connection-mark=CONN_MLBB new-packet-mark=PKT_MLBB passthrough=no comment="Packet Mark - Mobile Legends"
+
+# ------------------------------------------------------------------------------
+# 2. PUBG MOBILE
+# ------------------------------------------------------------------------------
+# TCP : 10012, 13000, 14000, 17500, 20000, 20001, 20002
+# UDP : 7889, 10012, 10612, 13000, 14000, 17000, 17500, 20000, 20001, 20002
+
+/ip firewall mangle
+add chain=prerouting action=mark-connection protocol=tcp dst-port=10012,13000,14000,17500,20000-20002 new-connection-mark=CONN_PUBG passthrough=yes comment="Game - PUBG Mobile TCP"
+add chain=prerouting action=mark-connection protocol=udp dst-port=7889,10012,10612,13000,14000,17000,17500,20000-20002 new-connection-mark=CONN_PUBG passthrough=yes comment="Game - PUBG Mobile UDP"
+add chain=prerouting action=mark-packet connection-mark=CONN_PUBG new-packet-mark=PKT_PUBG passthrough=no comment="Packet Mark - PUBG Mobile"
+
+# ------------------------------------------------------------------------------
+# 3. GARENA FREE FIRE
+# ------------------------------------------------------------------------------
+# TCP : 39698, 39699, 39779, 39800
+# UDP : 10000-10008, 39003, 39698, 39699, 39779, 39800
+
+/ip firewall mangle
+add chain=prerouting action=mark-connection protocol=tcp dst-port=39698,39699,39779,39800 new-connection-mark=CONN_FREEFIRE passthrough=yes comment="Game - Free Fire TCP"
+add chain=prerouting action=mark-connection protocol=udp dst-port=10000-10008,39003,39698,39699,39779,39800 new-connection-mark=CONN_FREEFIRE passthrough=yes comment="Game - Free Fire UDP"
+add chain=prerouting action=mark-packet connection-mark=CONN_FREEFIRE new-packet-mark=PKT_FREEFIRE passthrough=no comment="Packet Mark - Free Fire"
+
+# ------------------------------------------------------------------------------
+# 4. VALORANT (RIOT GAMES)
+# ------------------------------------------------------------------------------
+# TCP : 2099, 5222, 5223, 8393-8400
+# UDP : 7000-8000, 8180-8181, 60000-60050
+
+/ip firewall mangle
+add chain=prerouting action=mark-connection protocol=tcp dst-port=2099,5222,5223,8393-8400 new-connection-mark=CONN_VALORANT passthrough=yes comment="Game - Valorant TCP"
+add chain=prerouting action=mark-connection protocol=udp dst-port=7000-8000,8180,8181,60000-60050 new-connection-mark=CONN_VALORANT passthrough=yes comment="Game - Valorant UDP"
+add chain=prerouting action=mark-packet connection-mark=CONN_VALORANT new-packet-mark=PKT_VALORANT passthrough=no comment="Packet Mark - Valorant"
+
+# ------------------------------------------------------------------------------
+# 5. POINT BLANK (ZEPETTO)
+# ------------------------------------------------------------------------------
+# TCP : 1209, 1210, 1211, 40000-40009
+# UDP : 40000-40010
+
+/ip firewall mangle
+add chain=prerouting action=mark-connection protocol=tcp dst-port=1209-1211,40000-40009 new-connection-mark=CONN_PB passthrough=yes comment="Game - Point Blank TCP"
+add chain=prerouting action=mark-connection protocol=udp dst-port=40000-40010 new-connection-mark=CONN_PB passthrough=yes comment="Game - Point Blank UDP"
+add chain=prerouting action=mark-packet connection-mark=CONN_PB new-packet-mark=PKT_PB passthrough=no comment="Packet Mark - Point Blank"
+
+# ------------------------------------------------------------------------------
+# 6. GENSHIN IMPACT
+# ------------------------------------------------------------------------------
+# TCP : 80, 443, 22401
+# UDP : 22101, 22102, 22401-22403
+
+/ip firewall mangle
+add chain=prerouting action=mark-connection protocol=udp dst-port=22101,22102,22401-22403 new-connection-mark=CONN_GENSHIN passthrough=yes comment="Game - Genshin Impact UDP"
+add chain=prerouting action=mark-packet connection-mark=CONN_GENSHIN new-packet-mark=PKT_GENSHIN passthrough=no comment="Packet Mark - Genshin"
+
+# ------------------------------------------------------------------------------
+# 7. CALL OF DUTY MOBILE (CODM)
+# ------------------------------------------------------------------------------
+# TCP : 3013, 8700, 9030
+# UDP : 3013, 10000-10150, 50000-60000
+
+/ip firewall mangle
+add chain=prerouting action=mark-connection protocol=tcp dst-port=3013,8700,9030 new-connection-mark=CONN_CODM passthrough=yes comment="Game - CODM TCP"
+add chain=prerouting action=mark-connection protocol=udp dst-port=3013,10000-10150,50000-60000 new-connection-mark=CONN_CODM passthrough=yes comment="Game - CODM UDP"
+add chain=prerouting action=mark-packet connection-mark=CONN_CODM new-packet-mark=PKT_CODM passthrough=no comment="Packet Mark - CODM"
+
+# ------------------------------------------------------------------------------
+# 8. ROBLOX
+# ------------------------------------------------------------------------------
+# TCP : 80, 443, 563
+# UDP : 49152-65535
+
+/ip firewall mangle
+add chain=prerouting action=mark-connection protocol=udp dst-port=49152-65535 new-connection-mark=CONN_ROBLOX passthrough=yes comment="Game - Roblox UDP"
+add chain=prerouting action=mark-packet connection-mark=CONN_ROBLOX new-packet-mark=PKT_ROBLOX passthrough=no comment="Packet Mark - Roblox"
+
+# ------------------------------------------------------------------------------
+# 9. QUEUE TREE PRIORITAS GAME (Priority 1 = Highest Priority)
+# ------------------------------------------------------------------------------
+/queue tree
+add name="TOTAL_DOWNLOAD" parent=global queue=default max-limit=50M
+add name="TOTAL_UPLOAD" parent=global queue=default max-limit=20M
+
+add name="GAME_DOWNLOAD" parent=TOTAL_DOWNLOAD packet-mark=PKT_MLBB,PKT_PUBG,PKT_FREEFIRE,PKT_VALORANT,PKT_PB,PKT_GENSHIN,PKT_CODM,PKT_ROBLOX priority=1 queue=default limit-at=5M max-limit=50M comment="High Priority Gaming Download"
+add name="GAME_UPLOAD" parent=TOTAL_UPLOAD packet-mark=PKT_MLBB,PKT_PUBG,PKT_FREEFIRE,PKT_VALORANT,PKT_PB,PKT_GENSHIN,PKT_CODM,PKT_ROBLOX priority=1 queue=default limit-at=3M max-limit=20M comment="High Priority Gaming Upload"

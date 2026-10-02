@@ -1,0 +1,46 @@
+# ================================================================
+# Apache .htaccess — ComitTools Pro / MikrotikAI Security & Rules
+# ================================================================
+
+# 1. Protect Sensitive Files & Credentials
+<FilesMatch "(\.json|\.lock|\.git|\.env|\.firebaserc|firebase\.json|README\.md)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Allow public access to data.json and api.json if needed by frontend
+<FilesMatch "^(data\.json|api\.json)$">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Allow from all
+    </IfModule>
+</FilesMatch>
+
+# 2. Options & Indexing
+Options -Indexes
+
+# 3. Default Charset
+AddDefaultCharset UTF-8
+
+# 4. MIME Types for Scripts and Icons
+<IfModule mod_mime.c>
+    AddType text/javascript .js
+    AddType text/css .css
+    AddType image/svg+xml .svg
+    AddType application/json .json
+</IfModule>
+
+# 5. Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+

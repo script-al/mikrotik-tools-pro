@@ -1,0 +1,13 @@
+{
+  "name": "ComitTools MikroTik Pro API",
+  "version": "2.5.0",
+  "endpoints": {
+    "tools": "/assets/js/data.json",
+    "ports": "/features/PORT-FORWARDING-ONLINE-GAMES/port-games.txt",
+    "scripts": "/assets/txt/mikrotik_scripts.txt"
+  },
+  "compatibility": {
+    "routeros": ["6.x", "7.x"],
+    "architectures": ["x86", "arm", "arm64", "mipsbe", "tile", "smips"]
+  }
+}

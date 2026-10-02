@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — ComitTools Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/firebase-config.js"></script>
+  <script src="../assets/js/firebase-auth.js"></script>
+
+  <style>
+    /* ── Reset & Base ─────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        #0f172a;
+      --surface:   #1e293b;
+      --glass:     rgba(255,255,255,0.05);
+      --border:    rgba(255,255,255,0.10);
+      --orange:    #ff5c00;
+      --orange-h:  #ff7a30;
+      --teal:      #3fd3c0;
+      --text:      #e2e8f0;
+      --muted:     #94a3b8;
+      --error:     #f87171;
+      --success:   #4ade80;
+      --radius:    14px;
+      --shadow:    0 8px 40px rgba(0,0,0,0.55);
+    }
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── Animated background ─────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 30%, rgba(255,92,0,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 80% 70%, rgba(63,211,192,0.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── Layout ──────────────────────────── */
+    .page-wrapper {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+
+    /* ── Logo / Brand ────────────────────── */
+    .brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .brand-logo {
+      width: 58px; height: 58px;
+      background: linear-gradient(135deg, var(--orange), var(--teal));
+      border-radius: 16px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 26px; color: #fff; margin-bottom: 12px;
+      box-shadow: 0 0 28px rgba(255,92,0,0.40);
+    }
+    .brand h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
+    .brand h1 span { color: var(--orange); }
+    .brand p  { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    /* ── Card ────────────────────────────── */
+    .card {
+      width: 100%; max-width: 440px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px;
+      box-shadow: var(--shadow);
+    }
+
+    /* ── Tabs ────────────────────────────── */
+    .tabs {
+      display: flex; gap: 0;
+      background: rgba(0,0,0,0.25);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+    .tab-btn {
+      flex: 1; padding: 9px 0;
+      background: none; border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background .2s, color .2s;
+    }
+    .tab-btn.active {
+      background: var(--orange);
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(255,92,0,0.40);
+    }
+
+    /* ── Social buttons ──────────────────── */
+    .social-row {
+      display: flex; gap: 10px;
+      margin-bottom: 22px;
+    }
+    .social-btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 10px 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--glass);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer;
+      transition: border-color .2s, background .2s, transform .15s;
+    }
+    .social-btn:hover { border-color: var(--orange); background: rgba(255,92,0,0.08); transform: translateY(-1px); }
+    .social-btn .fab { font-size: 16px; }
+    .social-btn.google  .fab { color: #ea4335; }
+    .social-btn.facebook .fab { color: #1877f2; }
+    .social-btn.github   .fab { color: #f0f6fc; }
+
+    /* ── Divider ─────────────────────────── */
+    .divider {
+      position: relative; text-align: center;
+      margin-bottom: 22px;
+      color: var(--muted); font-size: 12px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      position: absolute; top: 50%;
+      width: calc(50% - 28px); height: 1px;
+      background: var(--border);
+    }
+    .divider::before { left: 0; }
+    .divider::after  { right: 0; }
+
+    /* ── Section heading ─────────────────── */
+    .section-title {
+      font-size: 20px; font-weight: 800;
+      margin-bottom: 22px;
+      letter-spacing: -0.3px;
+    }
+
+    /* ── Form elements ───────────────────── */
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block;
+      font-size: 12px; font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 7px;
+      text-transform: uppercase; letter-spacing: 0.6px;
+    }
+    .input-wrap {
+      position: relative; display: flex; align-items: center;
+    }
+    .input-wrap .input-icon {
+      position: absolute; left: 14px;
+      color: var(--muted); font-size: 14px;
+      pointer-events: none;
+    }
+    .input-wrap input {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
+      background: rgba(0,0,0,0.30);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    .input-wrap input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(255,92,0,0.18);
+    }
+    .input-wrap input::placeholder { color: var(--muted); }
+    .toggle-pw {
+      position: absolute; right: 14px;
+      background: none; border: none;
+      color: var(--muted); cursor: pointer;
+      font-size: 14px; padding: 4px;
+      transition: color .2s;
+    }
+    .toggle-pw:hover { color: var(--orange); }
+
+    /* ── Captcha ─────────────────────────── */
+    .captcha-row {
+      display: flex; gap: 10px; align-items: center;
+    }
+    .captcha-box {
+      min-width: 110px; height: 46px;
+      background: linear-gradient(135deg, #1e3a5f, #0f172a);
+      border: 1px dashed var(--teal);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Courier New', monospace;
+      font-size: 22px; font-weight: 700;
+      letter-spacing: 8px;
+      color: var(--teal);
+      text-shadow: 0 0 8px rgba(63,211,192,0.6);
+      user-select: none;
+      cursor: pointer;
+      position: relative; overflow: hidden;
+      flex-shrink: 0;
+    }
+    .captcha-box::after {
+      content: '↻';
+      position: absolute; bottom: 3px; right: 5px;
+      font-size: 10px; color: rgba(63,211,192,0.5);
+    }
+    .captcha-noise {
+      position: absolute; inset: 0;
+      background-image: repeating-linear-gradient(
+        0deg, transparent, transparent 2px, rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 4px
+      );
+    }
+    .captcha-row .input-wrap { flex: 1; }
+
+    /* ── Primary button ──────────────────── */
+    .btn-primary {
+      width: 100%; padding: 13px;
+      background: var(--orange);
+      border: none; border-radius: 10px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: background .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(255,92,0,0.40);
+      margin-bottom: 18px;
+    }
+    .btn-primary:hover  { background: var(--orange-h); transform: translateY(-1px); box-shadow: 0 6px 28px rgba(255,92,0,0.50); }
+    .btn-primary:active { transform: translateY(0); }
+
+    /* ── Footer links ────────────────────── */
+    .form-footer {
+      text-align: center; font-size: 13px; color: var(--muted);
+      line-height: 1.8;
+    }
+    .form-footer a, .link-btn {
+      color: var(--orange);
+      text-decoration: none;
+      font-weight: 600;
+      background: none; border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: inherit;
+      cursor: pointer;
+      transition: color .2s;
+    }
+    .form-footer a:hover, .link-btn:hover { color: var(--orange-h); text-decoration: underline; }
+
+    /* ── Alert ───────────────────────────── */
+    .alert {
+      padding: 11px 14px; border-radius: 10px;
+      font-size: 13px; font-weight: 500;
+      margin-bottom: 18px; display: none;
+    }
+    .alert.error   { background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.30); color: var(--error); }
+    .alert.success { background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.30); color: var(--success); }
+    .alert.show    { display: flex; align-items: center; gap: 9px; }
+
+    /* ── Panels ──────────────────────────── */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── Forgot password ─────────────────── */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--muted);
+      background: none; border: none;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer; margin-bottom: 20px;
+      transition: color .2s;
+    }
+    .back-link:hover { color: var(--orange); }
+
+    /* ── Password strength ───────────────── */
+    .pw-strength { margin-top: 6px; }
+    .pw-bar {
+      height: 3px; border-radius: 2px;
+      background: var(--border);
+      margin-bottom: 4px; overflow: hidden;
+    }
+    .pw-bar-fill { height: 100%; width: 0; border-radius: 2px; transition: width .3s, background .3s; }
+    .pw-label { font-size: 11px; color: var(--muted); }
+
+    /* ── Footer tag ──────────────────────── */
+    .page-footer {
+      margin-top: 24px;
+      font-size: 12px; color: var(--muted);
+      text-align: center; opacity: 0.7;
+    }
+
+    /* ── Google Chooser Modal ─────────────────── */
+    .g-modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: none; align-items: center; justify-content: center; padding: 16px;
+    }
+    .g-modal-overlay.open { display: flex; }
+    .g-modal {
+      background: #1e293b;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 26px 24px;
+      max-width: 440px; width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+      position: relative;
+    }
+    .g-account-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      cursor: pointer; transition: all .2s;
+      margin-bottom: 10px; text-align: left; width: 100%;
+      color: var(--text);
+    }
+    .g-account-item:hover {
+      background: rgba(255,92,0,0.08);
+      border-color: rgba(255,92,0,0.4);
+      transform: translateY(-1px);
+    }
+    .g-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 16px; color: #fff; flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- Brand -->
+  <div class="brand">
+    <div class="brand-logo"><i class="fas fa-network-wired"></i></div>
+    <h1>Comit<span>Tools</span> Pro</h1>
+    <p>MikroTik Network Tools — Members Area</p>
+  </div>
+
+  <!-- Card -->
+  <div class="card">
+
+    <!-- ══ LOGIN PANEL ══════════════════════════════ -->
+    <div id="panel-login" class="panel active">
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('login')">Sign In</button>
+        <button class="tab-btn"        onclick="showTab('register')">Sign Up</button>
+      </div>
+
+      <!-- Social -->
+      <div class="social-row">
+        <button class="social-btn google"   onclick="openSocialChooser('google')" type="button">
+          <i class="fab fa-google"></i><span>Google</span>
+        </button>
+        <button class="social-btn facebook" onclick="openSocialChooser('facebook')" type="button">
+          <i class="fab fa-facebook-f"></i><span>Facebook</span>
+        </button>
+        <button class="social-btn github"   onclick="openSocialChooser('github')" type="button">
+          <i class="fab fa-github"></i><span>GitHub</span>
+        </button>
+      </div>
+
+      <div class="divider">or sign in with email</div>
+
+      <div class="section-title">SIGN IN</div>
+
+      <div id="login-alert" class="alert error"><i class="fas fa-circle-exclamation"></i><span></span></div>
+
+      <form id="login-form" onsubmit="doLogin(event)">
+        <!-- Email -->
+        <div class="form-group">
+          <label>Email Address</label>
+          <div class="input-wrap">
+            <i class="fas fa-envelope input-icon"></i>
+            <input type="email" id="l-email" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+        </div>
+        <!-- Password -->
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" id="l-password" placeholder="••••••••" autocomplete="current-password" required />
+            <button type="button" class="toggle-pw" onclick="togglePw('l-password', this)"><i class="fas fa-eye"></i></button>
+          </div>
+        </div>
+        <!-- Captcha -->
+        <div class="form-group">
+          <label>Security Check — click image to refresh</label>
+          <div class="captcha-row">
+            <div class="captcha-box" id="captcha-display" onclick="refreshCaptcha('login')" title="Click to refresh">
+              <div class="captcha-noise"></div>
+              <span id="captcha-text-login"></span>
+            </div>
+            <div class="input-wrap">
+              <i class="fas fa-shield-halved input-icon"></i>
+              <input type="text" id="l-captcha" placeholder="Enter code" maxlength="4" autocomplete="off" required />
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary"><i class="fas fa-right-to-bracket"></i> &nbsp;Login</button>
+      </form>
+
+      <div class="form-footer">
+        <button class="link-btn" onclick="showTab('forgot')">Forgot Password?</button>
+        &nbsp;·&nbsp;
+        Not a member? <button class="link-btn" onclick="showTab('register')">Sign Up</button>
+      </div>
+    </div><!-- /panel-login -->
+
+
+    <!-- ══ REGISTER PANEL ═══════════════════════════ -->
+    <div id="panel-register" class="panel">
+
+      <div class="tabs">
+        <button class="tab-btn"        onclick="showTab('login')">Sign In</button>
+        <button class="tab-btn active" onclick="showTab('register')">Sign Up</button>
+      </div>
+
+      <!-- Social -->
+      <div class="social-row">
+        <button class="social-btn google"   onclick="openSocialChooser('google')" type="button">
+          <i class="fab fa-google"></i><span>Google</span>
+        </button>
+        <button class="social-btn facebook" onclick="openSocialChooser('facebook')" type="button">
+          <i class="fab fa-facebook-f"></i><span>Facebook</span>
+        </button>
+        <button class="social-btn github"   onclick="openSocialChooser('github')" type="button">
+          <i class="fab fa-github"></i><span>GitHub</span>
+        </button>
+      </div>
+
+      <div class="divider">or sign up with email</div>
+
+      <div class="section-title">CREATE ACCOUNT</div>
+
+      <div id="reg-alert" class="alert error"><i class="fas fa-circle-exclamation"></i><span></span></div>
+      <div id="reg-success" class="alert success"><i class="fas fa-circle-check"></i><span></span></div>
+
+      <form id="reg-form" onsubmit="doRegister(event)">
+        <div class="form-group">
+          <label>Full Name</label>
+          <div class="input-wrap">
+            <i class="fas fa-user input-icon"></i>
+            <input type="text" id="r-name" placeholder="Your full name" autocomplete="name" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <div class="input-wrap">
+            <i class="fas fa-envelope input-icon"></i>
+            <input type="email" id="r-email" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>WhatsApp Number</label>
+          <div class="input-wrap">
+            <i class="fab fa-whatsapp input-icon"></i>
+            <input type="tel" id="r-whatsapp" placeholder="+62 812 3456 7890" autocomplete="tel" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" id="r-password" placeholder="Min. 6 characters" oninput="checkStrength(this)" autocomplete="new-password" required />
+            <button type="button" class="toggle-pw" onclick="togglePw('r-password', this)"><i class="fas fa-eye"></i></button>
+          </div>
+          <div class="pw-strength">
+            <div class="pw-bar"><div class="pw-bar-fill" id="pw-bar-fill"></div></div>
+            <div class="pw-label" id="pw-label"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" id="r-confirm" placeholder="Repeat password" autocomplete="new-password" required />
+            <button type="button" class="toggle-pw" onclick="togglePw('r-confirm', this)"><i class="fas fa-eye"></i></button>
+          </div>
+        </div>
+        <!-- Captcha -->
+        <div class="form-group">
+          <label>Security Check — click image to refresh</label>
+          <div class="captcha-row">
+            <div class="captcha-box" id="captcha-display-r" onclick="refreshCaptcha('reg')" title="Click to refresh">
+              <div class="captcha-noise"></div>
+              <span id="captcha-text-reg"></span>
+            </div>
+            <div class="input-wrap">
+              <i class="fas fa-shield-halved input-icon"></i>
+              <input type="text" id="r-captcha" placeholder="Enter code" maxlength="4" autocomplete="off" required />
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary"><i class="fas fa-user-plus"></i> &nbsp;Create Account</button>
+      </form>
+
+      <div class="form-footer">
+        Already have an account? <button class="link-btn" onclick="showTab('login')">Sign In</button>
+      </div>
+    </div><!-- /panel-register -->
+
+
+    <!-- ══ FORGOT PASSWORD PANEL ════════════════════ -->
+    <div id="panel-forgot" class="panel">
+
+      <button class="back-link" onclick="showTab('login')"><i class="fas fa-arrow-left"></i> Back to Sign In</button>
+
+      <div class="section-title">RESET PASSWORD</div>
+
+      <div id="fp-alert"   class="alert error"><i class="fas fa-circle-exclamation"></i><span></span></div>
+      <div id="fp-success" class="alert success"><i class="fas fa-circle-check"></i><span></span></div>
+
+      <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">
+        Enter your registered email address. A password reset link will be simulated (check the success message for a demo token).
+      </p>
+
+      <form id="fp-form" onsubmit="doForgot(event)">
+        <div class="form-group">
+          <label>Email Address</label>
+          <div class="input-wrap">
+            <i class="fas fa-envelope input-icon"></i>
+            <input type="email" id="fp-email" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>New Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" id="fp-newpw" placeholder="New password (min. 6 chars)" autocomplete="new-password" required />
+            <button type="button" class="toggle-pw" onclick="togglePw('fp-newpw', this)"><i class="fas fa-eye"></i></button>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary"><i class="fas fa-key"></i> &nbsp;Reset Password</button>
+      </form>
+    </div><!-- /panel-forgot -->
+
+  </div><!-- /card -->
+
+  <!-- ── Social Account Chooser Modal ─────── -->
+  <div class="g-modal-overlay" id="social-chooser-modal">
+    <div class="g-modal" id="social-modal-content">
+      <!-- Content injected by JS -->
+    </div>
+  </div>
+
+  <div class="page-footer">© 2026 ComitTools Pro · Powered by MikroTik Network Intelligence</div>
+
+</div><!-- /page-wrapper -->
+
+<script>
+  /* ── Social Chooser handlers ─────────── */
+  let currentProvider = 'google';
+
+  function openSocialChooser(provider) {
+    currentProvider = provider;
+
+    // ── REAL OAuth via Firebase (jika sudah dikonfigurasi) ──────────
+    if (window.FIREBASE_CONFIGURED) {
+      const overlay = document.getElementById('social-chooser-modal');
+      const modal   = document.getElementById('social-modal-content');
+      // Tampilkan loading sementara Firebase popup terbuka
+      modal.innerHTML = `
+        <div style="text-align:center;padding:40px 20px;">
+          <div style="font-size:28px;margin-bottom:12px;">${provider === 'google' ? '🔵' : provider === 'github' ? '🐙' : '🔷'}</div>
+          <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;">
+            Membuka popup ${provider.charAt(0).toUpperCase()+provider.slice(1)}…
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:20px;">
+            Izinkan popup dari browser Anda jika diminta
+          </div>
+          <div style="color:var(--orange);"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+        </div>
+      `;
+      overlay.classList.add('open');
+
+      const onSuccess = (data) => {
+        overlay.classList.remove('open');
+        const redirectTarget = new URLSearchParams(window.location.search).get('redirect') || 'profile.html';
+        window.location.href = redirectTarget;
+      };
+      const onError = (msg, code) => {
+        showAlert('login-alert', '❌ ' + msg);
+        showFallbackModal(provider, msg);
+      };
+
+      if (provider === 'google') {
+        window.firebaseGoogleLogin(onSuccess, onError);
+      } else if (provider === 'github') {
+        window.firebaseGitHubLogin(onSuccess, onError);
+      } else {
+        showFallbackModal(provider, 'Login ' + provider + ' belum didukung via Firebase. Pilih akun langsung di bawah:');
+      }
+      return;
+    }
+
+    showFallbackModal(provider);
+  }
+
+  function showFallbackModal(provider, notice) {
+    currentProvider = provider;
+    const overlay = document.getElementById('social-chooser-modal');
+    const modal   = document.getElementById('social-modal-content');
+    
+    let title = provider === 'google' ? 'Pilih Akun Google' : (provider === 'github' ? 'Pilih Akun GitHub' : 'Pilih Akun Facebook');
+    let icon = provider === 'google' ? '<i class="fab fa-google" style="color:#ea4335;font-size:22px;"></i>' : 
+               (provider === 'github' ? '<i class="fab fa-github" style="color:#f0f6fc;font-size:22px;"></i>' : '<i class="fab fa-facebook" style="color:#1877f2;font-size:22px;"></i>');
+    let btnText = provider === 'google' ? 'GUNAKAN AKUN GOOGLE LAIN:' : (provider === 'github' ? 'GUNAKAN AKUN GITHUB LAIN:' : 'GUNAKAN AKUN FACEBOOK LAIN:');
+
+    let noticeHtml = '';
+    if (notice) {
+      noticeHtml = `
+        <div style="background:rgba(255,92,0,0.12);border:1px solid rgba(255,92,0,0.35);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:#fca5a5;line-height:1.45;">
+          <div style="font-weight:700;margin-bottom:4px;color:#ff8c42;display:flex;align-items:center;gap:6px;">
+            <i class="fas fa-info-circle"></i> Info Autentikasi
+          </div>
+          <div>${notice.replace(/\n/g, '<br>')}</div>
+          <div style="margin-top:6px;color:#cbd5e1;font-weight:600;">👉 Anda tetap bisa memilih akun langsung di bawah ini:</div>
+        </div>
+      `;
+    }
+    
+    modal.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          ${icon}
+          <div>
+            <h3 style="font-size:16px;font-weight:800;margin:0;">${title}</h3>
+            <div style="font-size:11px;color:var(--muted)">Lanjutkan ke ComitTools Pro</div>
+          </div>
+        </div>
+        <button type="button" onclick="closeSocialChooser()" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;"><i class="fas fa-xmark"></i></button>
+      </div>
+
+      ${noticeHtml}
+
+      <!-- Account 1: Owner -->
+      <button type="button" class="g-account-item" onclick="selectSocialAccount('acm2lp21@gmail.com', 'Baharuddin / ACIL (Owner)', 'https://unavatar.io/acm2lp21@gmail.com?fallback=https://ui-avatars.com/api/?name=Baharuddin&background=ff5c00&color=fff', this)">
+        <div class="g-avatar" style="background:linear-gradient(135deg,#ff5c00,#e11d48);">
+          <img src="https://unavatar.io/acm2lp21@gmail.com?fallback=https://ui-avatars.com/api/?name=Baharuddin&background=ff5c00&color=fff" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">
+        </div>
+        <div style="flex:1;text-align:left;">
+          <div style="font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;gap:6px">
+            Baharuddin / ACIL
+            <span style="font-size:10px;background:rgba(255,92,0,0.2);color:#ff5c00;padding:1px 6px;border-radius:10px;font-weight:800;">OWNER</span>
+          </div>
+          <div style="font-size:12px;color:var(--muted)">acm2lp21@gmail.com</div>
+        </div>
+        <i class="fas fa-chevron-right" style="color:var(--muted);font-size:12px;"></i>
+      </button>
+
+      <!-- Account 2: Admin ComitTools -->
+      <button type="button" class="g-account-item" onclick="selectSocialAccount('admin@comit.id', 'Admin ComitTools', 'https://ui-avatars.com/api/?name=Admin+Comit&background=38bdf8&color=fff', this)">
+        <div class="g-avatar" style="background:linear-gradient(135deg,#38bdf8,#0ea5e9);">
+          <img src="https://ui-avatars.com/api/?name=Admin+Comit&background=38bdf8&color=fff" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+        </div>
+        <div style="flex:1;text-align:left;">
+          <div style="font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;gap:6px">
+            Admin ComitTools
+            <span style="font-size:10px;background:rgba(56,189,248,0.2);color:#38bdf8;padding:1px 6px;border-radius:10px;font-weight:800;">PRO</span>
+          </div>
+          <div style="font-size:12px;color:var(--muted)">admin@comit.id</div>
+        </div>
+        <i class="fas fa-chevron-right" style="color:var(--muted);font-size:12px;"></i>
+      </button>
+
+      <!-- Custom Account -->
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;">${btnText}</div>
+        <form onsubmit="submitCustomSocial(event)" style="display:flex;gap:6px;">
+          <input type="email" id="s-custom-email" placeholder="nama@gmail.com" style="flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:rgba(0,0,0,0.3);color:#fff;font-size:12px;" required>
+          <button type="submit" id="s-custom-btn" style="padding:8px 14px;font-size:12px;border-radius:8px;background:var(--orange);color:#fff;border:none;cursor:pointer;font-weight:600;">Pilih</button>
+        </form>
+      </div>
+    `;
+    overlay.classList.add('open');
+  }
+
+  function closeSocialChooser() {
+    document.getElementById('social-chooser-modal').classList.remove('open');
+  }
+
+  function selectSocialAccount(email, name, avatar, btnElement) {
+    if (btnElement) {
+      btnElement.innerHTML = '<div style="text-align:center;width:100%;color:var(--orange);"><i class="fas fa-spinner fa-spin"></i> Memverifikasi persetujuan OAuth...</div>';
+      btnElement.style.pointerEvents = 'none';
+    }
+    
+    // Simulate real OAuth latency and consent
+    setTimeout(() => {
+      const res = Auth.socialLogin(currentProvider, { email, name, avatar });
+      if (res.ok) {
+        const redirectTarget = new URLSearchParams(window.location.search).get('redirect') || 'profile.html';
+        window.location.href = redirectTarget;
+      } else {
+        showAlert('login-alert', res.error);
+        closeSocialChooser();
+      }
+    }, 1200);
+  }
+
+  function submitCustomSocial(e) {
+    e.preventDefault();
+    const email = document.getElementById('s-custom-email').value.trim();
+    if (!email || !email.includes('@')) return;
+    const name = email.split('@')[0];
+    const btn = document.getElementById('s-custom-btn');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+    const avatarUrl = 'https://unavatar.io/' + email + '?fallback=https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=random';
+    selectSocialAccount(email, name, avatarUrl, null);
+  }
+  /* ── Captcha state ───────────────────── */
+  const captchaCodes = { login: "", reg: "" };
+
+  function genCode() {
+    return String(Math.floor(1000 + Math.random() * 9000));
+  }
+
+  function refreshCaptcha(which) {
+    const code = genCode();
+    captchaCodes[which] = code;
+    const id = which === 'login' ? 'captcha-text-login' : 'captcha-text-reg';
+    document.getElementById(id).textContent = code;
+    const inputId = which === 'login' ? 'l-captcha' : 'r-captcha';
+    document.getElementById(inputId).value = "";
+  }
+
+  /* ── Tab switching ───────────────────── */
+  function showTab(tab) {
+    ['login','register','forgot'].forEach(p => {
+      document.getElementById('panel-' + p).classList.remove('active');
+    });
+    document.getElementById('panel-' + tab).classList.add('active');
+    clearAlerts();
+    if (tab === 'login')    refreshCaptcha('login');
+    if (tab === 'register') refreshCaptcha('reg');
+  }
+
+  function clearAlerts() {
+    document.querySelectorAll('.alert').forEach(el => el.classList.remove('show'));
+  }
+
+  function showAlert(id, msg, type='error') {
+    const el = document.getElementById(id);
+    el.className = 'alert ' + type + ' show';
+    el.querySelector('span').textContent = msg;
+  }
+
+  /* ── Password visibility ─────────────── */
+  function togglePw(inputId, btn) {
+    const inp = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      icon.className = 'fas fa-eye-slash';
+    } else {
+      inp.type = 'password';
+      icon.className = 'fas fa-eye';
+    }
+  }
+
+  /* ── Password strength ───────────────── */
+  function checkStrength(inp) {
+    const val  = inp.value;
+    const fill = document.getElementById('pw-bar-fill');
+    const lbl  = document.getElementById('pw-label');
+    let score  = 0;
+    if (val.length >= 6)  score++;
+    if (val.length >= 10) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    const levels = [
+      { w:'0%',   c:'transparent', t:'' },
+      { w:'20%',  c:'#ef4444',     t:'Very Weak' },
+      { w:'40%',  c:'#f97316',     t:'Weak' },
+      { w:'60%',  c:'#eab308',     t:'Fair' },
+      { w:'80%',  c:'#22c55e',     t:'Strong' },
+      { w:'100%', c:'#10b981',     t:'Very Strong' },
+    ];
+    const lvl = levels[Math.min(score, 5)];
+    fill.style.width      = lvl.w;
+    fill.style.background = lvl.c;
+    lbl.textContent       = lvl.t;
+    lbl.style.color       = lvl.c;
+  }
+
+  /* ── Social Login ────────────────────── */
+  // function removed as it is now handled by selectSocialAccount
+
+  /* ── Login ───────────────────────────── */
+  function doLogin(e) {
+    e.preventDefault();
+    clearAlerts();
+    const email    = document.getElementById('l-email').value.trim();
+    const password = document.getElementById('l-password').value;
+    const captcha  = document.getElementById('l-captcha').value.trim();
+
+    if (captcha !== captchaCodes.login) {
+      showAlert('login-alert', 'Captcha code is incorrect. Please try again.');
+      refreshCaptcha('login');
+      return;
+    }
+
+    const res = Auth.login(email, password);
+    if (res.ok) {
+      const redirectTarget = new URLSearchParams(window.location.search).get('redirect') || 'profile.html';
+      window.location.href = redirectTarget;
+    } else {
+      showAlert('login-alert', res.error);
+      refreshCaptcha('login');
+    }
+  }
+
+  /* ── Register ────────────────────────── */
+  function doRegister(e) {
+    e.preventDefault();
+    clearAlerts();
+    const name     = document.getElementById('r-name').value.trim();
+    const email    = document.getElementById('r-email').value.trim();
+    const whatsapp = document.getElementById('r-whatsapp').value.trim();
+    const password = document.getElementById('r-password').value;
+    const confirm  = document.getElementById('r-confirm').value;
+    const captcha  = document.getElementById('r-captcha').value.trim();
+
+    if (password !== confirm) { showAlert('reg-alert', 'Passwords do not match.'); return; }
+    if (captcha !== captchaCodes.reg) {
+      showAlert('reg-alert', 'Captcha code is incorrect. Please try again.');
+      refreshCaptcha('reg');
+      return;
+    }
+
+    const res = Auth.register({ name, email, password, whatsapp });
+    if (res.ok) {
+      const redirectTarget = new URLSearchParams(window.location.search).get('redirect') || 'profile.html';
+      showAlert('reg-success', `Welcome, ${res.user.name}! Account created. Redirecting…`, 'success');
+      setTimeout(() => { window.location.href = redirectTarget; }, 1200);
+    } else {
+      showAlert('reg-alert', res.error);
+      refreshCaptcha('reg');
+    }
+  }
+
+  /* ── Forgot Password (simulated) ─────── */
+  function doForgot(e) {
+    e.preventDefault();
+    clearAlerts();
+    const email = document.getElementById('fp-email').value.trim().toLowerCase();
+    const newpw = document.getElementById('fp-newpw').value;
+
+    const res = Auth.resetPassword(email, newpw);
+    if (res.ok) {
+      showAlert('fp-success', '✅ Password berhasil diperbarui! Silakan masuk dengan password baru Anda.', 'success');
+      document.getElementById('fp-form').reset();
+      const loginEmailInput = document.getElementById('l-email');
+      if (loginEmailInput) loginEmailInput.value = email;
+      setTimeout(() => {
+        showTab('login');
+        showAlert('login-alert', 'Password telah diubah. Silakan login.', 'success');
+      }, 1500);
+    } else {
+      showAlert('fp-alert', '❌ ' + res.error);
+    }
+  }
+
+  /* ── Init ────────────────────────────── */
+  (function init() {
+    refreshCaptcha('login');
+    refreshCaptcha('reg');
+
+    // Redirect if already logged in
+    if (Auth.isLoggedIn()) {
+      const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'profile.html';
+      window.location.href = redirectUrl;
+      return;
+    }
+
+    if (window.location.hash === '#register') {
+      showTab('register');
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const prov = params.get('provider');
+    if (prov) {
+      openSocialChooser(prov);
+    }
+  })();
+</script>
+
+</body>
+</html>

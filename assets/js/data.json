@@ -1,0 +1,234 @@
+{
+  "categories": [
+    {
+      "id": "lb",
+      "name": "Load Balancing",
+      "icon": "fa-network-wired",
+      "color": "orange",
+      "tools": [
+        {
+          "id": "lb-pcc-ultimate",
+          "name": "LB PCC ULTIMATE",
+          "desc": "Load Balancing PCC 2-15 ISP dengan mode LOCAL, RECURSIVE, HYBRID. Support RouterOS v6 & v7.",
+          "icon": "fa-network-wired",
+          "badge": "ULTIMATE",
+          "badgeClass": "badge-orange",
+          "version": "both",
+          "tier": "pro",
+          "new": true
+        },
+        {
+          "id": "lb-failover",
+          "name": "Failover Gateway",
+          "desc": "Script failover otomatis dengan Netwatch & recursive routing check.",
+          "icon": "fa-shuffle",
+          "badge": "FREE",
+          "badgeClass": "badge-free",
+          "version": "both",
+          "tier": "free"
+        }
+      ]
+    },
+    {
+      "id": "queue",
+      "name": "Queue & Bandwidth",
+      "icon": "fa-chart-bar",
+      "color": "teal",
+      "tools": [
+        {
+          "id": "queue-burst",
+          "name": "Queue & Burst Calculator",
+          "desc": "Kalkulator Rate Limit — Max Limit, Burst Limit, Threshold, Limit At secara akurat.",
+          "icon": "fa-tachometer-alt",
+          "badge": "NEW",
+          "badgeClass": "badge-teal",
+          "version": "both",
+          "tier": "free",
+          "new": true
+        },
+        {
+          "id": "queue-tree",
+          "name": "Queue Tree Generator",
+          "desc": "Buat Queue Tree hirarkis lengkap dengan parent queue dan per-client queues.",
+          "icon": "fa-sitemap",
+          "badge": "PRO",
+          "badgeClass": "badge-pro",
+          "version": "both",
+          "tier": "pro"
+        },
+        {
+          "id": "pon-calc",
+          "name": "Kalkulator PON Pro",
+          "desc": "Full Ratio 1:4 s/d 1:128. Hitung bandwidth per ONT, guaranteed, burst, dan generate queue script.",
+          "icon": "fa-fiber-optical",
+          "badge": "NEW",
+          "badgeClass": "badge-amber",
+          "version": "both",
+          "tier": "pro",
+          "new": true
+        }
+      ]
+    },
+    {
+      "id": "hotspot",
+      "name": "Hotspot & RADIUS",
+      "icon": "fa-wifi",
+      "color": "amber",
+      "tools": [
+        {
+          "id": "hotspot",
+          "name": "Hotspot Setup Generator",
+          "desc": "Setup Hotspot lengkap: DHCP, pool, profile, user, walled garden, trial mode.",
+          "icon": "fa-wifi",
+          "badge": "FREE",
+          "badgeClass": "badge-free",
+          "version": "both",
+          "tier": "free"
+        },
+        {
+          "id": "hotspot-user",
+          "name": "Hotspot User Bulk",
+          "desc": "Generate voucher/user hotspot dalam jumlah banyak sekaligus dengan format CSV.",
+          "icon": "fa-users",
+          "badge": "PRO",
+          "badgeClass": "badge-pro",
+          "version": "both",
+          "tier": "pro"
+        }
+      ]
+    },
+    {
+      "id": "firewall",
+      "name": "Firewall & Security",
+      "icon": "fa-shield-halved",
+      "color": "rose",
+      "tools": [
+        {
+          "id": "firewall",
+          "name": "Firewall Hardening",
+          "desc": "Script firewall lengkap: Anti-DDoS, port scan detection, brute-force protection, bogon filter.",
+          "icon": "fa-shield-halved",
+          "badge": "FREE",
+          "badgeClass": "badge-free",
+          "version": "both",
+          "tier": "free"
+        },
+        {
+          "id": "port-forward",
+          "name": "Port Forwarding / DST-NAT",
+          "desc": "Generator rule dst-nat untuk port forwarding service internal ke internet.",
+          "icon": "fa-arrow-right-arrow-left",
+          "badge": "FREE",
+          "badgeClass": "badge-free",
+          "version": "both",
+          "tier": "free"
+        }
+      ]
+    },
+    {
+      "id": "vpn",
+      "name": "VPN & Tunneling",
+      "icon": "fa-lock",
+      "color": "cyan",
+      "tools": [
+        {
+          "id": "vpn-wireguard",
+          "name": "WireGuard Server",
+          "desc": "Setup WireGuard VPN server lengkap dengan peer template (v7 only).",
+          "icon": "fa-shield",
+          "badge": "v7 ONLY",
+          "badgeClass": "badge-teal",
+          "version": "v7",
+          "tier": "pro"
+        },
+        {
+          "id": "vpn-l2tp",
+          "name": "L2TP/IPSec VPN",
+          "desc": "L2TP/IPSec server dengan PPP secrets dan firewall rules.",
+          "icon": "fa-lock",
+          "badge": "FREE",
+          "badgeClass": "badge-free",
+          "version": "both",
+          "tier": "free"
+        },
+        {
+          "id": "vpn-pptp",
+          "name": "PPTP Server",
+          "desc": "PPTP server setup sederhana (legacy, tidak direkomendasikan untuk produksi).",
+          "icon": "fa-key",
+          "badge": "v6",
+          "badgeClass": "badge-cyan",
+          "version": "v6",
+          "tier": "free"
+        },
+        {
+          "id": "vpn-sstp",
+          "name": "SSTP Server",
+          "desc": "SSTP VPN dengan self-signed certificate, pool, dan firewall rules.",
+          "icon": "fa-certificate",
+          "badge": "FREE",
+          "badgeClass": "badge-free",
+          "version": "both",
+          "tier": "free"
+        }
+      ]
+    },
+    {
+      "id": "qos",
+      "name": "QoS & Priority",
+      "icon": "fa-gamepad",
+      "color": "purple",
+      "tools": [
+        {
+          "id": "game-qos",
+          "name": "Game QoS Priority",
+          "desc": "Priority queue untuk gaming: MLBB, PUBG, Free Fire, Valorant, CODM, Dota2, dan 6 game lain.",
+          "icon": "fa-gamepad",
+          "badge": "FREE",
+          "badgeClass": "badge-free",
+          "version": "both",
+          "tier": "free"
+        }
+      ]
+    },
+    {
+      "id": "fiber",
+      "name": "Fiber & Monitoring",
+      "icon": "fa-tower-cell",
+      "color": "emerald",
+      "tools": [
+        {
+          "id": "netwatch",
+          "name": "Netwatch Alert Telegram",
+          "desc": "Kirim alert ke Telegram saat link up/down via Netwatch.",
+          "icon": "fa-bell",
+          "badge": "FREE",
+          "badgeClass": "badge-free",
+          "version": "both",
+          "tier": "free"
+        },
+        {
+          "id": "auto-backup",
+          "name": "Auto Backup Scheduler",
+          "desc": "Script backup otomatis ke email/FTP/TFTP atau script file dengan scheduler.",
+          "icon": "fa-database",
+          "badge": "FREE",
+          "badgeClass": "badge-free",
+          "version": "both",
+          "tier": "free"
+        },
+        {
+          "id": "branding",
+          "name": "Router Branding Tool",
+          "desc": "Set router identity, system note, dan user manager dari satu script.",
+          "icon": "fa-id-card",
+          "badge": "FREE",
+          "badgeClass": "badge-free",
+          "version": "both",
+          "tier": "free"
+        }
+      ]
+    }
+  ]
+}
+

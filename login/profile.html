@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile — ComitTools Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/firebase-config.js"></script>
+  <script src="../assets/js/firebase-auth.js"></script>
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --glass: rgba(255, 255, 255, 0.05);
+      --border: rgba(255, 255, 255, 0.10);
+      --orange: #ff5c00;
+      --orange-h: #ff7a30;
+      --teal: #3fd3c0;
+      --red: #ef4444;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --error: #f87171;
+      --success: #4ade80;
+      --radius: 14px;
+      --shadow: 0 8px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      background: var(--bg);
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 60% 50% at 15% 20%, rgba(255, 92, 0, 0.10) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 85% 80%, rgba(63, 211, 192, 0.08) 0%, transparent 70%);
+    }
+
+    /* ── Header ──────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      background: rgba(15, 23, 42, 0.80);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .header-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--orange), var(--teal));
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      color: #fff;
+    }
+
+    .header-brand span {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .header-brand span em {
+      color: var(--orange);
+      font-style: normal;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .header-user strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .avatar-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), var(--teal));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .avatar-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .verified-badge {
+      color: var(--teal);
+      font-size: 12px;
+    }
+
+    .settings-icon {
+      color: var(--muted);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 16px;
+      background: var(--orange);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, transform .15s;
+    }
+
+    .btn-logout:hover {
+      background: var(--orange-h);
+      transform: translateY(-1px);
+    }
+
+    /* ── Page layout ─────────────────────── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 36px 20px 60px;
+    }
+
+    /* ── Card ────────────────────────────── */
+    .card {
+      background: var(--glass);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title i {
+      color: var(--orange);
+    }
+
+    /* ── Profile header area ─────────────── */
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      margin-bottom: 26px;
+      flex-wrap: wrap;
+    }
+
+    .avatar-large {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), var(--teal));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+      border: 3px solid rgba(255, 92, 0, 0.40);
+      box-shadow: 0 0 30px rgba(255, 92, 0, 0.30);
+      cursor: pointer;
+    }
+
+    .avatar-large img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .avatar-large .avatar-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity .2s;
+      font-size: 18px;
+    }
+
+    .avatar-large:hover .avatar-overlay {
+      opacity: 1;
+    }
+
+    #avatar-upload {
+      display: none;
+    }
+
+    .profile-info h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .profile-info .email-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .badge-teal {
+      background: rgba(63, 211, 192, 0.15);
+      color: var(--teal);
+      border: 1px solid rgba(63, 211, 192, 0.30);
+    }
+
+    .badge-orange {
+      background: rgba(255, 92, 0, 0.15);
+      color: var(--orange);
+      border: 1px solid rgba(255, 92, 0, 0.30);
+    }
+
+    .badge-active {
+      background: rgba(74, 222, 128, 0.12);
+      color: #4ade80;
+      border: 1px solid rgba(74, 222, 128, 0.30);
+    }
+
+    .badge-free {
+      background: rgba(148, 163, 184, 0.12);
+      color: var(--muted);
+      border: 1px solid rgba(148, 163, 184, 0.20);
+    }
+
+    .badge-expired {
+      background: rgba(248, 113, 113, 0.12);
+      color: var(--error);
+      border: 1px solid rgba(248, 113, 113, 0.30);
+    }
+
+    .provider-badge {
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    /* ── Action buttons ──────────────────── */
+    .action-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--glass);
+      color: var(--text);
+      transition: all .2s;
+    }
+
+    .btn-action:hover {
+      border-color: var(--orange);
+      background: rgba(255, 92, 0, 0.10);
+      transform: translateY(-1px);
+    }
+
+    .btn-action.danger {
+      border-color: rgba(239, 68, 68, 0.30);
+    }
+
+    .btn-action.danger:hover {
+      border-color: var(--red);
+      background: rgba(239, 68, 68, 0.10);
+      color: var(--error);
+    }
+
+    .btn-action.primary {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(255, 92, 0, 0.35);
+    }
+
+    .btn-action.primary:hover {
+      background: var(--orange-h);
+      border-color: var(--orange-h);
+    }
+
+    /* ── Info rows ───────────────────────── */
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-row .label {
+      width: 160px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    .info-row .value {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* ── Membership table ────────────────── */
+    .mem-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .mem-table th {
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .mem-table td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .mem-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .remaining-pill {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(63, 211, 192, 0.12);
+      color: var(--teal);
+      border: 1px solid rgba(63, 211, 192, 0.25);
+    }
+
+    .remaining-pill.infinity {
+      color: var(--orange);
+      background: rgba(255, 92, 0, 0.12);
+      border-color: rgba(255, 92, 0, 0.25);
+    }
+
+    .remaining-pill.expired {
+      color: var(--error);
+      background: rgba(248, 113, 113, 0.12);
+      border-color: rgba(248, 113, 113, 0.25);
+    }
+
+    /* ── Show Payment button ─────────────── */
+    .btn-show-payment {
+      margin-top: 18px;
+      padding: 11px 26px;
+      background: var(--orange);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 20px rgba(255, 92, 0, 0.38);
+      transition: background .2s, transform .15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-show-payment:hover {
+      background: var(--orange-h);
+      transform: translateY(-1px);
+    }
+
+    /* ── Technical Notes ─────────────────── */
+    .tech-notes {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--teal);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+
+    .tech-notes h4 {
+      font-size: 13px;
+      color: var(--teal);
+      margin-bottom: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .tech-notes ul {
+      list-style: none;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 2;
+    }
+
+    .tech-notes ul li::before {
+      content: "▸ ";
+      color: var(--orange);
+    }
+
+    /* ── Edit / Change PW forms ──────────── */
+    .collapsible {
+      display: none;
+      margin-top: 22px;
+    }
+
+    .collapsible.open {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 7px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrap .input-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    .input-wrap input {
+      width: 100%;
+      padding: 11px 14px 11px 40px;
+      background: rgba(0, 0, 0, 0.30);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .input-wrap input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(255, 92, 0, 0.18);
+    }
+
+    .input-wrap input::placeholder {
+      color: var(--muted);
+    }
+
+    .toggle-pw {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      transition: color .2s;
+    }
+
+    .toggle-pw:hover {
+      color: var(--orange);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .btn-save {
+      padding: 10px 24px;
+      background: var(--orange);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 3px 14px rgba(255, 92, 0, 0.35);
+      transition: background .2s, transform .15s;
+    }
+
+    .btn-save:hover {
+      background: var(--orange-h);
+      transform: translateY(-1px);
+    }
+
+    /* ── Alert ───────────────────────────── */
+    .alert {
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .alert.error {
+      background: rgba(248, 113, 113, 0.15);
+      border: 1px solid rgba(248, 113, 113, 0.30);
+      color: var(--error);
+    }
+
+    .alert.success {
+      background: rgba(74, 222, 128, 0.12);
+      border: 1px solid rgba(74, 222, 128, 0.30);
+      color: var(--success);
+    }
+
+    .alert.show {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    /* ── Modal (payment / confirm delete) ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: #1e293b;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px 20px;
+      max-width: 650px;
+      width: 100%;
+      max-height: min(92vh, 850px);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+      margin: auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .modal-header h3 {
+      font-size: 18px;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .btn-close-modal {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px;
+      transition: color .2s;
+    }
+
+    .btn-close-modal:hover {
+      color: var(--orange);
+    }
+
+    .modal-body-scroll {
+      overflow-y: auto;
+      overflow-x: hidden;
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: 100%;
+      padding-right: 8px;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+
+    .modal-body-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .modal-body-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 92, 0, 0.45);
+      border-radius: 4px;
+    }
+
+    .modal .modal-footer {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .btn-cancel {
+      padding: 9px 20px;
+      border-radius: 9px;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .btn-cancel:hover {
+      border-color: var(--orange);
+      color: var(--text);
+    }
+
+    .input-glass {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .input-glass:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(255, 92, 0, 0.18);
+    }
+
+    .input-glass option {
+      background: #1e293b;
+      color: #fff;
+    }
+
+    /* ── Back link ───────────────────────── */
+    .back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .back-home:hover {
+      color: var(--orange);
+    }
+
+    /* ── Mobile ──────────────────────────── */
+    @media (max-width: 600px) {
+      .card {
+        padding: 22px 16px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .info-row .label {
+        width: 120px;
+      }
+
+      .profile-header {
+        gap: 14px;
+      }
+
+      .avatar-large {
+        width: 70px;
+        height: 70px;
+        font-size: 26px;
+      }
+
+      .profile-info h2 {
+        font-size: 18px;
+      }
+
+      .mem-table th,
+      .mem-table td {
+        padding: 10px 8px;
+        font-size: 12px;
+      }
+
+      header {
+        padding: 0 14px;
+      }
+
+      .header-user strong {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header>
+    <a class="header-brand" href="../index.html">
+      <div class="header-logo"><i class="fas fa-network-wired"></i></div>
+      <span>Comit<em>Tools</em> Pro</span>
+    </a>
+    <div class="header-right">
+      <div class="header-user" id="header-user-info">
+        <!-- filled by JS -->
+      </div>
+      <button class="btn-logout" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Logout</button>
+    </div>
+  </header>
+
+  <div class="page">
+
+    <a class="back-home" href="../index.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+
+    <!-- ── Profile Info Card ──────────────── -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-id-card"></i> ACCOUNT PROFILE</div>
+
+      <div class="profile-header">
+        <div class="avatar-large" onclick="document.getElementById('avatar-upload').click()"
+          title="Click to change photo">
+          <div id="avatar-inner-large"><!-- initials or img --></div>
+          <div class="avatar-overlay"><i class="fas fa-camera"></i></div>
+        </div>
+        <input type="file" id="avatar-upload" accept="image/*" onchange="handleAvatarUpload(event)" />
+        <div class="profile-info">
+          <h2 id="pi-name">—</h2>
+          <div class="email-row">
+            <i class="fas fa-envelope" style="font-size:12px;"></i>
+            <span id="pi-email">—</span>
+            <i class="fas fa-circle-check verified-badge" title="Email Identifier"></i>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+            <span class="badge badge-teal"><i class="fas fa-envelope"></i> E-MAIL AUTH</span>
+            <span class="badge badge-teal" style="font-size:10px;"><i class="fas fa-fingerprint"></i> E-MAIL
+              IDENTIFIER</span>
+            <span id="pi-provider-badge" class="badge provider-badge"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Rows -->
+      <div class="info-row">
+        <span class="label"><i class="fas fa-user" style="margin-right:6px;color:var(--orange)"></i>Full Name</span>
+        <span class="value" id="pi-name-val">—</span>
+      </div>
+      <div class="info-row">
+        <span class="label"><i class="fas fa-envelope" style="margin-right:6px;color:var(--orange)"></i>Email</span>
+        <span class="value" id="pi-email-val">—</span>
+      </div>
+      <div class="info-row">
+        <span class="label"><i class="fab fa-whatsapp" style="margin-right:6px;color:#25d366"></i>WhatsApp</span>
+        <span class="value" id="pi-wa-val">—</span>
+      </div>
+      <div class="info-row">
+        <span class="label"><i class="fas fa-plug" style="margin-right:6px;color:var(--teal)"></i>Auth Provider</span>
+        <span class="value" id="pi-provider-val">—</span>
+      </div>
+      <div class="info-row">
+        <span class="label"><i class="fas fa-calendar" style="margin-right:6px;color:var(--muted)"></i>Joined</span>
+        <span class="value" id="pi-joined">—</span>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-bar">
+        <a class="btn-action" href="../index.html"><i class="fas fa-house"></i> Home</a>
+        <button class="btn-action" onclick="toggleForm('edit')"><i class="fas fa-pen-to-square"></i> Edit
+          Profile</button>
+        <button class="btn-action" id="pw-btn" onclick="toggleForm('pw')"><i class="fas fa-key"></i> Set
+          Password</button>
+        <button class="btn-action danger" onclick="openDeleteModal()"><i class="fas fa-trash-can"></i> Delete
+          Account</button>
+        <button class="btn-action" style="margin-left:auto;" onclick="doLogout()"><i
+            class="fas fa-right-from-bracket"></i> Log-out</button>
+      </div>
+
+      <!-- Edit Profile Form (collapsible) -->
+      <div id="form-edit" class="collapsible">
+        <div class="card-title" style="margin-top:24px;"><i class="fas fa-pen-to-square"></i> EDIT PROFILE</div>
+        <div id="edit-alert" class="alert error"><i class="fas fa-circle-exclamation"></i><span></span></div>
+        <div id="edit-success" class="alert success"><i class="fas fa-circle-check"></i><span></span></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name</label>
+            <div class="input-wrap">
+              <i class="fas fa-user input-icon"></i>
+              <input type="text" id="edit-name" placeholder="Your full name" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>WhatsApp</label>
+            <div class="input-wrap">
+              <i class="fab fa-whatsapp input-icon"></i>
+              <input type="tel" id="edit-wa" placeholder="+62 812 3456 7890" />
+            </div>
+          </div>
+        </div>
+        <button class="btn-save" onclick="saveEdit()"><i class="fas fa-floppy-disk"></i> Save Changes</button>
+      </div>
+
+      <!-- Change Password Form (collapsible) -->
+      <div id="form-pw" class="collapsible">
+        <div class="card-title" style="margin-top:24px;"><i class="fas fa-key"></i> CHANGE PASSWORD</div>
+        <div id="pw-alert" class="alert error"><i class="fas fa-circle-exclamation"></i><span></span></div>
+        <div id="pw-success" class="alert success"><i class="fas fa-circle-check"></i><span></span></div>
+        <div class="form-group" id="cur-pw-group">
+          <label>Current Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" id="edit-curpw" placeholder="Current password" />
+            <button class="toggle-pw" type="button" onclick="togglePw('edit-curpw',this)"><i
+                class="fas fa-eye"></i></button>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>New Password</label>
+            <div class="input-wrap">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" id="edit-newpw" placeholder="Min. 6 characters" />
+              <button class="toggle-pw" type="button" onclick="togglePw('edit-newpw',this)"><i
+                  class="fas fa-eye"></i></button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Confirm New Password</label>
+            <div class="input-wrap">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" id="edit-confirmpw" placeholder="Repeat new password" />
+              <button class="toggle-pw" type="button" onclick="togglePw('edit-confirmpw',this)"><i
+                  class="fas fa-eye"></i></button>
+            </div>
+          </div>
+        </div>
+        <button class="btn-save" onclick="savePw()"><i class="fas fa-key"></i> Update Password</button>
+      </div>
+
+    </div><!-- /profile card -->
+
+    <!-- ── Membership Card ────────────────── -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-crown"></i> MEMBERSHIP STATUS</div>
+
+      <div style="overflow-x:auto;">
+        <table class="mem-table">
+          <thead>
+            <tr>
+              <th>STATUS</th>
+              <th>PACKAGE</th>
+              <th>PAY DATE</th>
+              <th>EXPIRE DATE</th>
+              <th>REMAINING TIME</th>
+            </tr>
+          </thead>
+          <tbody id="mem-tbody">
+            <tr>
+              <td colspan="5" style="text-align:center;color:var(--muted);padding:20px;">Loading…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="mem-notes" class="tech-notes" style="margin-top:20px; display:none;">
+        <h4><i class="fas fa-circle-info"></i> Membership Notes</h4>
+        <p id="mem-notes-text" style="font-size:13px;color:var(--muted);line-height:1.7;margin:0;"></p>
+      </div>
+
+      <button class="btn-show-payment" onclick="openPaymentModal()">
+        <i class="fas fa-credit-card"></i> SHOW PAYMENT
+      </button>
+    </div>
+
+    <!-- ── OWNER & SUPERADMIN CONTROL PANEL ── -->
+    <div id="owner-panel-container"></div>
+
+    <!-- ── Technical Notes Card ───────────── -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-terminal"></i> TECHNICAL NOTES</div>
+      <div class="tech-notes">
+        <h4><i class="fas fa-database"></i> Storage & Session</h4>
+        <ul>
+          <li>User accounts are stored in <code
+              style="color:var(--teal);background:rgba(63,211,192,0.08);padding:1px 5px;border-radius:4px;">localStorage</code>
+            (browser-only, no backend required).</li>
+          <li>Session persists until you click Logout or clear browser data.</li>
+          <li>Social login (Google / Facebook / GitHub) is simulated — demo accounts are created locally.</li>
+          <li>Passwords are hashed client-side using a djb2 variant before storage.</li>
+          <li>Profile avatars are stored as base64 data URLs.</li>
+          <li>To fully reset all data, clear <code
+              style="color:var(--teal);background:rgba(63,211,192,0.08);padding:1px 5px;border-radius:4px;">localStorage</code>
+            in DevTools → Application.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /page -->
+
+  <!-- ── Payment Modal ──────────────────── -->
+  <div class="modal-overlay" id="payment-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3><i class="fas fa-credit-card" style="color:var(--orange);margin-right:8px;"></i> Payment Information</h3>
+        <button class="btn-close-modal" onclick="closeModal('payment-modal')" title="Close"><i
+            class="fas fa-xmark"></i></button>
+      </div>
+      <div id="payment-modal-body" class="modal-body-scroll"></div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal('payment-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Delete Confirm Modal ───────────── -->
+  <div class="modal-overlay" id="delete-modal">
+    <div class="modal">
+      <h3 style="color:var(--error);"><i class="fas fa-triangle-exclamation" style="margin-right:8px;"></i> Delete
+        Account?</h3>
+      <p>This action is <strong>irreversible</strong>. Your account, profile data, and membership record will be
+        permanently removed from this browser.</p>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal('delete-modal')">Cancel</button>
+        <button class="btn-action danger" onclick="confirmDelete()"
+          style="border-color:var(--red);background:rgba(239,68,68,0.15);color:var(--error);">
+          <i class="fas fa-trash-can"></i> Yes, Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── Auth guard ──────────────────────── */
+    let user = Auth.getCurrentUser();
+    if (!user) { window.location.href = 'index.html'; }
+
+    /* ── Helpers ─────────────────────────── */
+    function initials(name) {
+      if (!name) return '?';
+      return name.trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    }
+    function fmtDate(iso) {
+      if (!iso || iso === '—') return '—';
+      return new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+    function togglePw(id, btn) {
+      const inp = document.getElementById(id);
+      const ic = btn.querySelector('i');
+      if (inp.type === 'password') { inp.type = 'text'; ic.className = 'fas fa-eye-slash'; }
+      else { inp.type = 'password'; ic.className = 'fas fa-eye'; }
+    }
+
+    /* ── Render header ───────────────────── */
+    function renderHeader(u) {
+      const hui = document.getElementById('header-user-info');
+      const fl = (u.name || u.email || 'U')[0].toUpperCase();
+      const avatarHTML = u.avatar
+        ? `<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.textContent='${fl}'" alt="${fl}">`
+        : fl;
+      hui.innerHTML = `
+      <div class="avatar-circle" id="header-avatar">${avatarHTML}</div>
+      <div>
+        <strong>${u.name}</strong><br>
+        <span style="font-size:11px;">${u.email} <i class="fas fa-circle-check verified-badge"></i> <i class="fas fa-gear settings-icon" onclick="toggleForm('edit')" title="Pengaturan Profil"></i></span>
+      </div>
+    `;
+    }
+
+    /* ── Render profile ──────────────────── */
+    function renderProfile(u) {
+      document.getElementById('pi-name').textContent = u.name;
+      document.getElementById('pi-email').textContent = u.email;
+      document.getElementById('pi-name-val').textContent = u.name;
+      document.getElementById('pi-email-val').textContent = u.email;
+      document.getElementById('pi-wa-val').textContent = u.whatsapp || '—';
+      document.getElementById('pi-provider-val').textContent = u.provider === 'email' ? 'Email / Password' : u.provider.charAt(0).toUpperCase() + u.provider.slice(1);
+      document.getElementById('pi-joined').textContent = fmtDate(u.createdAt);
+
+      // Avatar — support both HTTPS (Google/GitHub) and base64 uploads
+      const avatarEl = document.getElementById('avatar-inner-large');
+      const fl = (u.name || u.email || 'U')[0].toUpperCase();
+      if (u.avatar) {
+        avatarEl.innerHTML = `<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.textContent='${fl}'" alt="${fl}">`;
+      } else {
+        avatarEl.textContent = fl;
+      }
+
+      // Provider badge
+      const provBadge = document.getElementById('pi-provider-badge');
+      const icons = { email: 'fa-envelope', google: 'fa-google fab', facebook: 'fa-facebook-f fab', github: 'fa-github fab' };
+      const icon = icons[u.provider] || 'fa-circle-user';
+      provBadge.innerHTML = `<i class="${icon.includes('fab') ? icon : 'fas ' + icon}"></i> ${u.provider.toUpperCase()}`;
+      provBadge.className = 'badge badge-orange provider-badge';
+
+      // Allow all accounts to set or change password
+      const pwBtn = document.getElementById('pw-btn');
+      if (pwBtn) {
+        pwBtn.style.display = 'inline-flex';
+        pwBtn.innerHTML = u.password ? '<i class="fas fa-key"></i> Ganti Password' : '<i class="fas fa-lock"></i> Buat Password Akun';
+      }
+      const curPwGroup = document.getElementById('cur-pw-group');
+      if (curPwGroup) {
+        curPwGroup.style.display = u.password ? 'block' : 'none';
+      }
+
+      // Pre-fill edit form
+      document.getElementById('edit-name').value = u.name;
+      document.getElementById('edit-wa').value = u.whatsapp || '';
+    }
+
+    /* ── Render membership ───────────────── */
+    function renderMembership(u) {
+      const mem = Auth.getMembership(u.uid);
+      const tbody = document.getElementById('mem-tbody');
+
+      const statusClass = mem.status === 'ACTIVE' ? 'badge-active' :
+        mem.status === 'INACTIVE' ? 'badge-expired' : 'badge-free';
+      const isPro = mem.package && mem.package !== 'FREE';
+      const pkgClass = isPro ? 'badge-orange' : 'badge-free';
+      const remaining = mem.remainingTime;
+      const remClass = remaining === '∞' || remaining === 'Lifetime' ? 'infinity' :
+        remaining === 'Expired' ? 'expired' : '';
+      const expDisplay = mem.expireDate ? fmtDate(mem.expireDate) : '∞ Lifetime';
+
+      tbody.innerHTML = `
+      <tr>
+        <td><span class="badge ${statusClass}"><i class="fas fa-circle-check"></i> ${mem.status}</span></td>
+        <td><span class="badge ${pkgClass}"><i class="fas ${isPro ? 'fa-crown' : 'fa-user'}"></i> ${mem.package}</span></td>
+        <td>${fmtDate(mem.payDate)}</td>
+        <td>${expDisplay}</td>
+        <td><span class="remaining-pill ${remClass}"><i class="fas fa-clock"></i> ${remaining === '∞' ? '∞ Lifetime' : remaining}</span></td>
+      </tr>
+    `;
+
+      // Highlight button based on package
+      const payBtn = document.querySelector('.btn-show-payment');
+      if (payBtn) {
+        if (!isPro) {
+          payBtn.innerHTML = '<i class="fas fa-bolt"></i> UPGRADE KE PRO SEKARANG (BERLANGGANAN)';
+          payBtn.style.background = 'linear-gradient(135deg, #ff5c00, #ff8c00)';
+        } else {
+          payBtn.innerHTML = '<i class="fas fa-credit-card"></i> PERPANJANG / INFO PEMBAYARAN';
+          payBtn.style.background = 'var(--orange)';
+        }
+      }
+
+      if (mem.notes) {
+        document.getElementById('mem-notes').style.display = 'block';
+        document.getElementById('mem-notes-text').textContent = mem.notes;
+      }
+
+      // Store for payment modal
+      window._currentMem = mem;
+    }
+
+    /* ── Toggle collapsible forms ────────── */
+    function toggleForm(which) {
+      const ids = ['form-edit', 'form-pw'];
+      const target = 'form-' + which;
+      ids.forEach(id => {
+        if (id === target) {
+          document.getElementById(id).classList.toggle('open');
+        } else {
+          document.getElementById(id).classList.remove('open');
+        }
+      });
+    }
+
+    /* ── Save edit profile ───────────────── */
+    function saveEdit() {
+      const name = document.getElementById('edit-name').value.trim();
+      const wa = document.getElementById('edit-wa').value.trim();
+      clearAlert('edit-alert'); clearAlert('edit-success');
+
+      if (!name) {
+        showAlert('edit-alert', 'Nama lengkap tidak boleh kosong.', 'error');
+        return;
+      }
+
+      const res = Auth.updateProfile({ name, whatsapp: wa });
+      if (res.ok) {
+        user = res.user; // Update reference lokal
+        showAlert('edit-success', '✅ Profil berhasil disimpan dan diperbarui!', 'success');
+        renderProfile(user);
+        renderHeader(user);
+        renderOwnerPanel();
+      } else {
+        showAlert('edit-alert', res.error, 'error');
+      }
+    }
+
+    /* ── Save password ───────────────────── */
+    function savePw() {
+      clearAlert('pw-alert'); clearAlert('pw-success');
+      const cur = document.getElementById('edit-curpw').value;
+      const newpw = document.getElementById('edit-newpw').value;
+      const confirm = document.getElementById('edit-confirmpw').value;
+      if (newpw !== confirm) { showAlert('pw-alert', 'Password baru dan konfirmasi tidak cocok.', 'error'); return; }
+
+      const u = Auth.getCurrentUser();
+      const fields = { newPassword: newpw };
+      if (u && u.password) fields.currentPassword = cur;
+
+      const res = Auth.updateProfile(fields);
+      if (res.ok) {
+        user = res.user;
+        showAlert('pw-success', '✅ Password berhasil diperbarui!', 'success');
+        document.getElementById('edit-curpw').value = '';
+        document.getElementById('edit-newpw').value = '';
+        document.getElementById('edit-confirmpw').value = '';
+      } else {
+        showAlert('pw-alert', res.error, 'error');
+      }
+    }
+
+    /* ── Avatar upload ───────────────────── */
+    function handleAvatarUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (ev) {
+        const b64 = ev.target.result;
+        const res = Auth.updateProfile({ avatar: b64 });
+        if (res.ok) {
+          user = res.user;
+          renderProfile(user);
+          renderHeader(user);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    /* ── Modals ──────────────────────────── */
+    /* ── Modals ──────────────────────────── */
+    function openPaymentModal(preselectedPackage) {
+      const mem = window._currentMem || {};
+      const pkg = preselectedPackage || (mem.package === 'FREE' ? 'PRO MONTHLY' : mem.package);
+      let priceText = 'Rp 49.000 / Bulan';
+      if (pkg === '7 DAYS') priceText = 'Rp 15.000 / 1 Minggu';
+      else if (pkg === 'PRO MONTHLY') priceText = 'Rp 49.000 / Bulan';
+      else if (pkg === 'PRO 3 MONTHLY') priceText = 'Rp 120.000 / 3 Bulan';
+      else if (pkg === 'PRO LIFETIME') priceText = 'Rp 250.000 (Sekali Bayar Selamanya)';
+
+
+      document.getElementById('payment-modal-body').innerHTML = `
+      <div style="background:rgba(255,92,0,0.08);border:1px solid rgba(255,92,0,0.3);border-radius:12px;padding:14px 18px;margin-bottom:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div style="font-size:11px;text-transform:uppercase;color:var(--muted);font-weight:700;">Paket Yang Dipilih</div>
+            <div id="pay-pkg-display" style="font-size:18px;font-weight:800;color:var(--orange);">${pkg}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:11px;text-transform:uppercase;color:var(--muted);font-weight:700;">Total Tagihan</div>
+            <div id="pay-total-display" style="font-size:18px;font-weight:900;color:#fff;">${priceText}</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:13px;color:#fff;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+        <i class="fas fa-money-check-dollar" style="color:var(--teal)"></i>
+        PILIHAN METODE PEMBAYARAN:
+      </div>
+
+      <!-- QRIS -->
+      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;text-align:center;">
+        <div style="font-size:12px;font-weight:800;color:var(--teal);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">
+          <i class="fas fa-qrcode"></i> SCAN QRIS (SEMUA BANK & E-WALLET)
+        </div>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=00020101021126610014COM.GO-JEK.WWW01189360091439207873750210G9207873750303UMI51440014ID.CO.QRIS.WWW0215ID10265501027050303UMI5204481453033605802ID5909wifiKonut6012KONAWE%20UTARA61059335362070703A016304914F" onerror="this.onerror=null;this.src='../assets/images/qris-payment.png';" alt="QRIS wifi@Konut" style="max-width:160px;width:100%;border-radius:8px;border:2px solid rgba(255,255,255,0.1);margin:0 auto 8px;display:block;background:#fff;padding:6px;">
+        <div style="font-size:12px;color:#fff;font-weight:700;">wifi@Konut</div>
+        <div style="font-size:11px;color:var(--muted);font-family:monospace;">NMID : ID1026541126193 A01</div>
+        <div style="font-size:11px;color:var(--teal);margin-top:4px;">Mendukung: BCA, Mandiri, BRI, BNI, Dana, OVO, GoPay, LinkAja, ShopeePay, dll.</div>
+      </div>
+
+      <!-- E-Wallet & Bank Transfer Details -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:18px;">
+        <!-- E-Wallet -->
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:14px;">
+          <div style="font-size:12px;font-weight:800;color:var(--orange);margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+            <i class="fas fa-wallet"></i> E-WALLET
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">OVO, DANA, LINKAJA, GOPAY, ShopeePay dll.</div>
+          <div style="background:rgba(0,0,0,0.3);padding:8px 10px;border-radius:6px;font-family:monospace;font-size:14px;color:#fff;font-weight:700;display:flex;justify-content:space-between;align-items:center;">
+            <span>081355142432</span>
+            <button type="button" onclick="copyInfo('081355142432','Nomor E-Wallet',this)" title="Salin" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:13px;padding:4px;"><i class="fas fa-copy"></i></button>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">A/n: <strong>ACIL / Baharuddin</strong></div>
+        </div>
+
+        <!-- Bank Transfer -->
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:14px;">
+          <div style="font-size:12px;font-weight:800;color:var(--teal);margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+            <i class="fas fa-building-columns"></i> TRANSFER BANK
+          </div>
+          <div style="margin-bottom:8px;">
+            <div style="font-size:11px;color:var(--muted)">Seabank (A/n: ACIL):</div>
+            <div style="background:rgba(0,0,0,0.3);padding:6px 10px;border-radius:6px;font-family:monospace;font-size:13px;color:#fff;font-weight:700;display:flex;justify-content:space-between;align-items:center;">
+              <span>901150831284</span>
+              <button type="button" onclick="copyInfo('901150831284','No Rekening SeaBank',this)" title="Salin" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:13px;padding:4px;"><i class="fas fa-copy"></i></button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted)">Bank Jago (A/n: ACIL):</div>
+            <div style="background:rgba(0,0,0,0.3);padding:6px 10px;border-radius:6px;font-family:monospace;font-size:13px;color:#fff;font-weight:700;display:flex;justify-content:space-between;align-items:center;">
+              <span>105276733304</span>
+              <button type="button" onclick="copyInfo('105276733304','No Rekening Bank Jago',this)" title="Salin" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:13px;padding:4px;"><i class="fas fa-copy"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Konfirmasi Form & Instant Activation -->
+      <div style="background:rgba(63,211,192,0.06);border:1px solid rgba(63,211,192,0.25);border-radius:12px;padding:16px;margin-bottom:14px;">
+        <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:10px;">
+          <i class="fas fa-circle-check" style="color:var(--teal)"></i> Konfirmasi Pembayaran Anda
+        </div>
+        <div style="display:grid;gap:10px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div>
+              <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Nama Pengirim</label>
+              <input id="pay-sender" type="text" class="input-glass" placeholder="Nama pemilik rekening/wallet" value="${user.name || ''}" style="width:100%;padding:8px 12px;font-size:12px;">
+            </div>
+            <div>
+              <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Metode Pembayaran</label>
+              <select id="pay-method" class="input-glass" style="width:100%;padding:8px 12px;font-size:12px;">
+                <option value="QRIS wifi@Konut">QRIS (wifi@Konut)</option>
+                <option value="E-Wallet (Dana/OVO/GoPay)">E-Wallet (081355142432)</option>
+                <option value="SeaBank">SeaBank (901150831284)</option>
+                <option value="Bank Jago">Bank Jago (105276733304)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Paket Yang Dibeli</label>
+            <select id="pay-package" class="input-glass" style="width:100%;padding:8px 12px;font-size:12px;" onchange="updatePayPackagePrice(this.value)">
+              <option value="7 DAYS" ${pkg === '7 DAYS' ? 'selected' : ''}>7 DAYS — Rp 15.000 (Akses 1 Minggu)</option>
+              <option value="PRO MONTHLY" ${pkg === 'PRO MONTHLY' ? 'selected' : ''}>PRO MONTHLY — Rp 49.000 / Bulan (Hemat 22%)</option>
+              <option value="PRO 3 MONTHLY" ${pkg === 'PRO 3 MONTHLY' ? 'selected' : ''}>PRO 3 MONTHLY — Rp 120.000 / 3 Bulan</option>
+              <option value="PRO LIFETIME" ${pkg === 'PRO LIFETIME' ? 'selected' : ''}>PRO LIFETIME — Rp 250.000 (Akses Selamanya)</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;">
+            <button id="btn-payhook-check" class="btn-action primary" style="flex:1;min-width:220px;justify-content:center;padding:11px 16px;background:linear-gradient(135deg,#ff5c00,#e11d48);border-color:#ff5c00;box-shadow:0 4px 15px rgba(255,92,0,0.35);" onclick="payhookAutoCheck()">
+              <i class="fas fa-bolt"></i> Verifikasi Otomatis (Payhook Auto-Check)
+            </button>
+            <button class="btn-action" style="flex:1;min-width:160px;justify-content:center;padding:11px 16px;background:rgba(255,255,255,0.06);border-color:var(--border);" onclick="confirmPurchase()">
+              <i class="fas fa-check-circle"></i> Konfirmasi Manual
+            </button>
+            <a id="btn-wa-confirm" href="https://wa.me/6281355142432?text=Halo%20Bang%20AL%20/%20ACIL,%20saya%20sudah%20melakukan%20pembayaran%20ComitTools%20PRO%20untuk%20email:%20${encodeURIComponent(user.email)}" target="_blank" class="btn-action" style="flex:1;min-width:160px;background:#25d366;border-color:#25d366;color:#fff;justify-content:center;padding:11px 16px;text-decoration:none;">
+              <i class="fab fa-whatsapp"></i> Chat WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:11px;color:var(--muted);text-align:center;line-height:1.6;margin-top:10px;">
+        📌 A/n Penerima: <strong>ACIL / Bang-AL / Baharuddin</strong><br>
+        Terima kasih atas pembayaran Anda! Senang bisa bertransaksi kembali 🙏🏻
+      </div>
+    `;
+      document.getElementById('payment-modal').classList.add('open');
+    }
+
+    function copyInfo(text, msg, btn) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check" style="color:#4ade80"></i>';
+        setTimeout(() => { btn.innerHTML = orig; }, 1800);
+      }
+    }
+
+    function updatePayPackagePrice(pkg) {
+      const totalEl = document.getElementById('pay-total-display');
+      const pkgEl = document.getElementById('pay-pkg-display');
+      let priceText = 'Rp 250.000 (Sekali Bayar Selamanya)';
+      if (pkg === '7 DAYS') priceText = 'Rp 15.000 / 1 Minggu';
+      else if (pkg === 'PRO MONTHLY') priceText = 'Rp 49.000 / Bulan';
+      else if (pkg === 'PRO 3 MONTHLY') priceText = 'Rp 120.000 / 3 Bulan';
+      else if (pkg === 'PRO LIFETIME') priceText = 'Rp 250.000 (Sekali Bayar Selamanya)';
+      if (totalEl) totalEl.textContent = priceText;
+      if (pkgEl) pkgEl.textContent = pkg;
+      const waBtn = document.getElementById('btn-wa-confirm');
+      if (waBtn && user) {
+        waBtn.href = `https://wa.me/6281355142432?text=Halo%20Bang%20AL%20/%20ACIL,%20saya%20sudah%20melakukan%20pembayaran%20ComitTools%20PRO%20paket%20${encodeURIComponent(pkg)}%20untuk%20email:%20${encodeURIComponent(user.email)}`;
+      }
+    }
+
+    function payhookAutoCheck() {
+      const btn = document.getElementById('btn-payhook-check');
+      const sender = document.getElementById('pay-sender')?.value.trim() || user.name || 'Pelanggan';
+      const method = document.getElementById('pay-method')?.value || 'QRIS wifi@Konut';
+      const pkg = document.getElementById('pay-package')?.value || 'PRO MONTHLY';
+      let amount = 'Rp 49.000';
+      if (pkg === '7 DAYS') amount = 'Rp 15.000';
+      else if (pkg === 'PRO MONTHLY') amount = 'Rp 49.000';
+      else if (pkg === 'PRO 3 MONTHLY') amount = 'Rp 120.000';
+      else if (pkg === 'PRO LIFETIME') amount = 'Rp 250.000';
+      const invoice = 'PAYHOOK-' + Date.now().toString(36).toUpperCase();
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghubungkan ke Payhook Gateway...';
+      }
+
+      setTimeout(() => {
+        if (typeof Auth !== 'undefined' && Auth.processPayhookWebhook) {
+          Auth.processPayhookWebhook({
+            order_id: invoice,
+            email: user.email,
+            name: user.name,
+            package: pkg,
+            amount: amount,
+            method: method,
+            sender: sender,
+            status: 'PAID'
+          });
+        }
+
+        alert('🎉 PAYHOOK WEBHOOK SUKSES!\n\nPembayaran transaksi [' + invoice + '] berhasil diverifikasi otomatis melalui integrasi Payhook gateway.\nPaket ' + pkg + ' telah aktif seketika untuk akun Anda!');
+        closeModal('payment-modal');
+        user = Auth.getCurrentUser();
+        renderMembership(user);
+        renderHeader(user);
+        renderOwnerPanel();
+      }, 1200);
+    }
+
+    function confirmPurchase() {
+      const sender = document.getElementById('pay-sender')?.value.trim() || user.name || 'Pelanggan';
+      const method = document.getElementById('pay-method')?.value || 'QRIS';
+      const pkg = document.getElementById('pay-package')?.value || 'PRO MONTHLY';
+      let amount = 'Rp 49.000';
+      if (pkg === '7 DAYS') amount = 'Rp 15.000';
+      else if (pkg === 'PRO MONTHLY') amount = 'Rp 49.000';
+      else if (pkg === 'PRO 3 MONTHLY') amount = 'Rp 120.000';
+      else if (pkg === 'PRO LIFETIME') amount = 'Rp 250.000';
+
+      if (typeof Auth !== 'undefined' && Auth.submitPaymentOrder) {
+        Auth.submitPaymentOrder({
+          uid: user.uid,
+          userEmail: user.email,
+          userName: user.name,
+          package: pkg,
+          amount: amount,
+          method: method,
+          senderName: sender
+        });
+      }
+
+      alert('🎉 Terima kasih! Pembayaran Anda berhasil dikonfirmasi dan paket ' + pkg + ' telah AKTIF untuk akun Anda.');
+      closeModal('payment-modal');
+      user = Auth.getCurrentUser();
+      renderMembership(user);
+      renderHeader(user);
+      renderOwnerPanel();
+    }
+
+    /* ── Owner / Superadmin Control Panel ── */
+    function renderOwnerPanel() {
+      const isOwner = user && (user.email === 'acm2lp21@gmail.com' || user.role === 'superadmin' || user.role === 'owner');
+      const container = document.getElementById('owner-panel-container');
+      if (!container) return;
+      if (!isOwner) {
+        container.innerHTML = '';
+        container.style.display = 'none';
+        return;
+      }
+
+      const allUsers = (typeof Auth !== 'undefined' && Auth.getAllUsers) ? Auth.getAllUsers() : {};
+      const allMems = (typeof Auth !== 'undefined' && Auth.getAllMemberships) ? Auth.getAllMemberships() : {};
+      const allOrders = (typeof Auth !== 'undefined' && Auth.getAllOrders) ? Auth.getAllOrders() : [];
+      const userKeys = Object.keys(allUsers);
+
+      let proCount = 0;
+      Object.values(allMems).forEach(m => {
+        if (m && m.package && m.package.includes('PRO')) proCount++;
+      });
+
+      container.style.display = 'block';
+      container.innerHTML = `
+      <div class="card" style="border: 2px solid rgba(255,92,0,0.5); background: rgba(255,92,0,0.03); box-shadow: 0 8px 32px rgba(255,92,0,0.15);">
+        <div class="card-title" style="color: var(--orange); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+          <span><i class="fa-solid fa-crown" style="color:#fbbf24"></i> OWNER & SUPERADMIN CONTROL PANEL</span>
+          <span class="badge badge-orange" style="font-size:10px;">PRO LIFETIME / OWNER</span>
+        </div>
+
+        <p style="font-size:12px;color:var(--muted);margin-bottom:18px;">
+          Selamat datang <strong>Baharuddin / Bang-AL (Owner)</strong>! Anda memiliki akses penuh untuk mengatur database pengguna, status paket, lisensi, dan memverifikasi pesanan otomatis Payhook.
+        </p>
+
+        <!-- Stats Overview -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px;">
+          <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+            <div style="font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:700;">Total Pengguna</div>
+            <div style="font-size:22px;font-weight:900;color:#fff;margin-top:2px;">${userKeys.length}</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+            <div style="font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:700;">Member PRO Aktif</div>
+            <div style="font-size:22px;font-weight:900;color:var(--teal);margin-top:2px;">${proCount}</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+            <div style="font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:700;">Transaksi Payhook</div>
+            <div style="font-size:22px;font-weight:900;color:var(--orange);margin-top:2px;">${allOrders.length}</div>
+          </div>
+        </div>
+
+        <!-- User Management Table -->
+        <div style="margin-bottom:24px;">
+          <div style="font-size:12px;font-weight:800;color:#fff;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+            <span><i class="fa-solid fa-users text-teal"></i> Manajemen Database Pengguna (${userKeys.length})</span>
+            <button class="btn-action" style="padding:4px 10px;font-size:11px;" onclick="adminCreateUser()"><i class="fa-solid fa-user-plus"></i> Tambah User</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="mem-table" style="font-size:12px;">
+              <thead>
+                <tr>
+                  <th>Nama & Email</th>
+                  <th>WhatsApp</th>
+                  <th>Role</th>
+                  <th>Paket</th>
+                  <th>Tindakan Cepat</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${userKeys.map(k => {
+        const u = allUsers[k];
+        const m = allMems[u.uid] || {};
+        const isCurrent = u.email === user.email;
+        return `
+                    <tr>
+                      <td>
+                        <strong>${u.name || '-'}</strong><br>
+                        <span style="font-family:monospace;font-size:11px;color:var(--muted)">${u.email}</span>
+                      </td>
+                      <td>${u.whatsapp || '—'}</td>
+                      <td><span class="badge ${u.role === 'superadmin' ? 'badge-orange' : 'badge-free'}">${u.role || 'user'}</span></td>
+                      <td><span class="badge ${m.package?.includes('PRO') ? 'badge-active' : 'badge-free'}">${m.package || 'FREE'}</span></td>
+                      <td>
+                        <div style="display:flex;gap:4px;flex-wrap:wrap">
+                          ${m.package !== 'PRO LIFETIME' && m.package !== 'PRO LIFETIME / OWNER' ? `<button class="btn-action" style="padding:3px 7px;font-size:10px;background:rgba(63,211,192,0.1);color:var(--teal);border-color:var(--teal)" onclick="adminUpgradeUser('${u.email}')">Upgrade PRO</button>` : ''}
+                          ${!isCurrent ? `<button class="btn-action" style="padding:3px 7px;font-size:10px;background:rgba(255,92,0,0.1);color:var(--orange);border-color:var(--orange)" onclick="adminToggleRole('${u.email}')">${u.role === 'admin' ? 'Set User' : 'Set Admin'}</button>` : ''}
+                          ${!isCurrent ? `<button class="btn-action danger" style="padding:3px 7px;font-size:10px;" onclick="adminDeleteUser('${u.email}')"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </div>
+                      </td>
+                    </tr>
+                  `;
+      }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div>
+          <div style="font-size:12px;font-weight:800;color:#fff;margin-bottom:8px;">
+            <i class="fa-solid fa-receipt text-orange"></i> Riwayat Transaksi & Payhook Webhook (${allOrders.length})
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="mem-table" style="font-size:12px;">
+              <thead>
+                <tr>
+                  <th>Invoice ID</th>
+                  <th>Pelanggan</th>
+                  <th>Metode</th>
+                  <th>Jumlah</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${allOrders.length === 0 ? `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:14px;">Belum ada riwayat pesanan.</td></tr>` : allOrders.map(o => `
+                  <tr>
+                    <td style="font-family:monospace;font-weight:700;color:var(--orange)">${o.orderId}</td>
+                    <td>${o.userName}<br><span style="font-size:10px;color:var(--muted)">${o.userEmail}</span></td>
+                    <td>${o.method || '-'}</td>
+                    <td><b>${o.amount || '-'}</b></td>
+                    <td><span class="badge ${o.status.includes('PAID') || o.status.includes('SUCCESS') ? 'badge-active' : 'badge-orange'}">${o.status}</span></td>
+                    <td>
+                      ${!o.status.includes('PAID') ? `<button class="btn-action" style="padding:3px 7px;font-size:10px;background:var(--teal);color:#0f172a;" onclick="adminVerifyOrder('${o.orderId}')">Verifikasi</button>` : `<span style="color:#4ade80;font-size:11px;">✓ Terverifikasi</span>`}
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+    }
+
+    function adminUpgradeUser(email) {
+      const allUsers = Auth.getAllUsers();
+      const u = allUsers[email];
+      if (u) {
+        Auth.upgradeMembership(u.uid, 'PRO LIFETIME', null, 'Diberikan oleh Owner');
+        alert('✅ Pengguna ' + email + ' berhasil diupgrade ke PRO LIFETIME.');
+        renderOwnerPanel();
+        if (email === user.email) { renderMembership(user); renderHeader(user); }
+      }
+    }
+
+    function adminToggleRole(email) {
+      const allUsers = Auth.getAllUsers();
+      const u = allUsers[email];
+      if (u) {
+        u.role = (u.role === 'admin') ? 'user' : 'admin';
+        localStorage.setItem('ctp_users', JSON.stringify(allUsers));
+        alert('✅ Role ' + email + ' diubah menjadi ' + u.role);
+        renderOwnerPanel();
+      }
+    }
+
+    function adminDeleteUser(email) {
+      if (email === 'acm2lp21@gmail.com') {
+        alert('❌ Akun Utama Owner tidak dapat dihapus.');
+        return;
+      }
+      if (!confirm('Apakah Anda yakin ingin menghapus akun ' + email + '?')) return;
+      const allUsers = Auth.getAllUsers();
+      const u = allUsers[email];
+      if (u) {
+        delete allUsers[email];
+        localStorage.setItem('ctp_users', JSON.stringify(allUsers));
+        const allMems = Auth.getAllMemberships();
+        delete allMems[u.uid];
+        localStorage.setItem('ctp_memberships', JSON.stringify(allMems));
+        alert('✅ Akun ' + email + ' berhasil dihapus.');
+        renderOwnerPanel();
+      }
+    }
+
+    function adminVerifyOrder(orderId) {
+      if (typeof Auth !== 'undefined' && Auth.verifyOrderInstant) {
+        Auth.verifyOrderInstant(orderId);
+        alert('✅ Pesanan ' + orderId + ' berhasil diverifikasi. Paket user aktif.');
+        renderOwnerPanel();
+      }
+    }
+
+    function adminCreateUser() {
+      const email = prompt('Masukkan alamat email user baru:');
+      if (!email || !email.includes('@')) return;
+      const name = prompt('Masukkan nama pengguna:') || email.split('@')[0];
+      const pwd = prompt('Masukkan password:') || 'user123';
+      const res = Auth.register({ name, email, password: pwd });
+      if (res.ok) {
+        alert('✅ User baru ' + email + ' berhasil ditambahkan!');
+        renderOwnerPanel();
+      } else {
+        alert('Gagal: ' + res.error);
+      }
+    }
+
+    function openDeleteModal() {
+      document.getElementById('delete-modal').classList.add('open');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    function confirmDelete() {
+      const u = Auth.getCurrentUser();
+      if (u && (u.email === 'acm2lp21@gmail.com' || u.role === 'superadmin')) {
+        alert('❌ Akun Utama Owner tidak dapat dihapus.');
+        closeModal('delete-modal');
+        return;
+      }
+      Auth.deleteAccount();
+      window.location.href = 'index.html';
+    }
+
+    /* ── Logout ──────────────────────────── */
+    function doLogout() {
+      Auth.logout();
+      // Also sign out from Firebase if available
+      if (typeof window.firebaseSignOut === 'function') {
+        window.firebaseSignOut();
+      }
+      window.location.href = 'index.html';
+    }
+
+    /* ── Alert helpers ───────────────────── */
+    function showAlert(id, msg, type = 'error') {
+      const el = document.getElementById(id);
+      el.className = 'alert ' + type + ' show';
+      el.innerHTML = `<i class="fas fa-${type === 'error' ? 'circle-exclamation' : 'circle-check'}"></i><span>${msg}</span>`;
+    }
+    function clearAlert(id) {
+      document.getElementById(id).className = 'alert';
+    }
+
+    /* ── Close modals on overlay click ───── */
+    document.querySelectorAll('.modal-overlay').forEach(ov => {
+      ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); });
+    });
+
+    /* ── Init ────────────────────────────── */
+    renderHeader(user);
+    renderProfile(user);
+    renderMembership(user);
+    renderOwnerPanel();
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,14 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "api/mikrotikai-de06b-firebase-adminsdk-fbsvc-d37904a89c.json",
+      "payhook_transactions.json"
+    ],
+    "cleanUrls": false
+  }
+}
+

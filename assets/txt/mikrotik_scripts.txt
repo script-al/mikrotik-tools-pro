@@ -1,0 +1,80 @@
+# ==============================================================================
+# MIKROTIK ROUTEROS PRODUCTION SCRIPTS REPOSITORY
+# ComitTools Pro - https://comitidn.github.io
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. AUTO BACKUP & EXPORT TO TELEGRAM BOT
+# ------------------------------------------------------------------------------
+# Jalankan script ini setiap hari pukul 00:00 untuk mengirimkan file .backup dan .rsc ke Telegram Anda.
+# Ganti botID dan myChatID dengan milik Anda.
+
+:local botID "123456789:ABCdefGHIjklMNOpqrSTUvwxyz"
+:local myChatID "-100123456789"
+:local myDate [/system clock get date]
+:local myTime [/system clock get time]
+:local mySysName [/system identity get name]
+:local backupFile ("backup-" . $mySysName . "-" . $myDate)
+:local exportFile ("export-" . $mySysName . "-" . $myDate . ".rsc")
+
+# Create Backup and Export
+/system backup save name=$backupFile
+/export file=$exportFile
+:delay 5s
+
+# Send Telegram notification
+/tool fetch url=("https://api.telegram.org/bot" . $botID . "/sendDocument") http-data=("chat_id=" . $myChatID . "&caption=Backup File MikroTik: " . $mySysName) http-method=post file=($backupFile . ".backup")
+:delay 2s
+/tool fetch url=("https://api.telegram.org/bot" . $botID . "/sendDocument") http-data=("chat_id=" . $myChatID . "&caption=Export Script MikroTik: " . $mySysName) http-method=post file=$exportFile
+
+# ------------------------------------------------------------------------------
+# 2. AUTO REBOOT SETIAP MALAM
+# ------------------------------------------------------------------------------
+/system scheduler
+add name="Nightly-Reboot" start-time=03:30:00 interval=1d on-event="/system reboot" comment="Auto Reboot Every 03:30 AM"
+
+# ------------------------------------------------------------------------------
+# 3. NETWATCH ALERT KE TELEGRAM SAAT LINK DOWN / UP
+# ------------------------------------------------------------------------------
+# Masukkan ke Tool -> Netwatch
+# Host: 8.8.8.8 (atau gateway ISP)
+# Interval: 00:00:10 (10 detik)
+# Timeout: 1000ms
+
+# Tab DOWN:
+/tool fetch url="https://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<CHAT_ID>&text=%E2%9A%A0%EF%B8%8F%20[ALERT]%20ISP%20Gateway%20DOWN!%20Check%20Connection%20Immediately." keep-result=no
+
+# Tab UP:
+/tool fetch url="https://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<CHAT_ID>&text=%E2%9C%85%20[RESTORED]%20ISP%20Gateway%20is%20Back%20ONLINE!" keep-result=no
+
+# ------------------------------------------------------------------------------
+# 4. FLUSH DNS CACHE OTOMATIS JIKA MELEBIHI BATAS
+# ------------------------------------------------------------------------------
+/system script
+add name="Clear-DNS-Cache" source={
+    :local currentSize [/ip dns cache print count-only]
+    :if ($currentSize > 1500) do={
+        /ip dns cache flush
+        :log info ("DNS Cache cleared. Entries was: " . $currentSize)
+    }
+}
+
+/system scheduler
+add name="Schedule-DNS-Clear" interval=1h on-event=Clear-DNS-Cache comment="Check DNS Cache hourly"
+
+# ------------------------------------------------------------------------------
+# 5. PROTEKSI WINBOX BRUTEFORCE (PORT 8291)
+# ------------------------------------------------------------------------------
+/ip firewall filter
+add chain=input protocol=tcp dst-port=8291 connection-state=new src-address-list=black_list_winbox action=drop comment="Drop Winbox Bruteforcers"
+add chain=input protocol=tcp dst-port=8291 connection-state=new src-address-list=winbox_stage3 action=add-src-to-address-list address-list=black_list_winbox address-list-timeout=1d comment="Blacklist 24h"
+add chain=input protocol=tcp dst-port=8291 connection-state=new src-address-list=winbox_stage2 action=add-src-to-address-list address-list=winbox_stage3 address-list-timeout=1m
+add chain=input protocol=tcp dst-port=8291 connection-state=new src-address-list=winbox_stage1 action=add-src-to-address-list address-list=winbox_stage2 address-list-timeout=1m
+add chain=input protocol=tcp dst-port=8291 connection-state=new action=add-src-to-address-list address-list=winbox_stage1 address-list-timeout=1m
+
+# ------------------------------------------------------------------------------
+# 6. DOH (DNS OVER HTTPS) CLOUDFLARE SETUP
+# ------------------------------------------------------------------------------
+/tool fetch url=https://cacerts.digicert.com/DigiCertGlobalRootCA.crt.pem
+/certificate import file-name=DigiCertGlobalRootCA.crt.pem passphrase=""
+/ip dns set use-doh-server="https://cloudflare-dns.com/dns-query" verify-doh-cert=yes

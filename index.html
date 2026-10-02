@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ComitTools PRO — MikroTik Script Generator</title>
+  <meta name="description" content="Tools generator script MikroTik RouterOS v6 & v7: Load Balancing PCC, Queue, Hotspot, Firewall, VPN, Game QoS, PON Calculator dan lainnya.">
+  <meta name="keywords" content="mikrotik, routeros, script generator, load balancing, pcc, hotspot, firewall, vpn, queue, comittools">
+  <meta name="author" content="ComitTools PRO">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23ff5c00'/><text x='50%' y='50%' font-size='18' text-anchor='middle' dominant-baseline='central' fill='white'>⚡</text></svg>">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Styles -->
+  <link rel="stylesheet" href="assets/css/app.css?v=2.6">
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!--  DISCLAIMER GATE                                              -->
+<!-- ============================================================ -->
+<div id="disclaimerGate" class="modal-overlay open" style="z-index:9999">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-circle-exclamation text-orange"></i> &nbsp;Penting! Harap Baca</div>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:28px 24px">
+      <div style="font-size:48px;margin-bottom:16px">⚠️</div>
+      <h3 style="font-size:16px;color:#fff;margin-bottom:12px">Disclaimer ComitTools PRO</h3>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">Tools ini menyediakan <b style="color:#fff">generator script MikroTik RouterOS</b> untuk edukasi dan kebutuhan profesional. Pastikan Anda memahami setiap script sebelum dijalankan di perangkat production.</p>
+      <ul style="text-align:left;font-size:12px;color:var(--text-secondary);line-height:1.9;margin-bottom:16px;padding-left:16px">
+        <li>Script yang di-generate bersifat template — sesuaikan dengan topologi Anda</li>
+        <li>Gunakan <b style="color:#fff">Safe Mode</b> di Winbox (Ctrl+X) saat paste script</li>
+        <li>Pengguna bertanggung jawab penuh atas penerapan script</li>
+        <li>Support RouterOS v6.x dan v7.x secara terpisah</li>
+      </ul>
+      <label class="form-check" style="justify-content:center;margin-bottom:20px">
+        <input type="checkbox" id="disclaimerAgree"> Saya mengerti dan setuju
+      </label>
+      <button class="btn btn-primary btn-full" id="disclaimerBtn" disabled onclick="acceptDisclaimer()">
+        <i class="fa-solid fa-check"></i> Lanjutkan ke ComitTools PRO
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  NAVIGATION BAR                                               -->
+<!-- ============================================================ -->
+<nav class="site-nav glass-nav">
+  <div class="nav-inner">
+    <!-- Brand -->
+    <a class="nav-brand" href="#" onclick="scrollToTop()">
+      <div class="nav-logo"><i class="fa-solid fa-bolt"></i></div>
+      <div>
+        <div class="nav-title">Comit<span class="accent">Tools</span> <span class="nav-badge">PRO</span></div>
+      </div>
+    </a>
+
+    <!-- Desktop Menu -->
+    <ul class="nav-menu">
+      <li><button class="nav-link active" onclick="showSection('home')"><i class="fa-solid fa-house"></i> Home</button></li>
+      <li><button class="nav-link" onclick="openNavModal('price')"><i class="fa-solid fa-tag"></i> Price</button></li>
+      <li><button class="nav-link" onclick="openNavModal('updates')"><i class="fa-solid fa-rotate"></i> Updates</button></li>
+      <li><button class="nav-link" onclick="openNavModal('docs')"><i class="fa-solid fa-book"></i> Docs</button></li>
+      <li><button class="nav-link" onclick="openNavModal('contact')"><i class="fa-solid fa-envelope"></i> Contact</button></li>
+      <li><button class="nav-link nav-tools-btn" onclick="showToolsDropdown()"><i class="fa-solid fa-toolbox"></i> Options Tools <i class="fa-solid fa-chevron-down" style="font-size:10px"></i></button></li>
+    </ul>
+
+    <!-- Nav Actions -->
+    <div class="nav-actions">
+      <button class="btn-icon tooltip" data-tip="Toggle Theme" onclick="toggleTheme()" id="themeBtn">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+      <button class="btn-icon tooltip" data-tip="Search Tools" onclick="focusSearch()">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+
+      <!-- Auth State: Not Logged In -->
+      <div id="navNotLoggedIn">
+        <div class="dropdown" id="authDropdown">
+          <button class="btn btn-primary btn-sm" onclick="toggleDropdown('authDropdown')">
+            <i class="fa-solid fa-right-to-bracket"></i> Login
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="login/index.html"><i class="fa-solid fa-envelope"></i> Login dengan Email</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="login/index.html?provider=google"><i class="fa-brands fa-google"></i> Login dengan Google</a>
+            <a class="dropdown-item" href="login/index.html?provider=github"><i class="fa-brands fa-github"></i> Login dengan GitHub</a>
+            <a class="dropdown-item" href="login/index.html?provider=facebook"><i class="fa-brands fa-facebook"></i> Login dengan Facebook</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="login/index.html#register"><i class="fa-solid fa-user-plus"></i> Registrasi</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auth State: Logged In -->
+      <div id="navLoggedIn" class="hidden">
+        <div class="dropdown" id="userDropdown">
+          <div class="nav-user-chip" onclick="toggleDropdown('userDropdown')">
+            <div class="nav-user-avatar" id="navAvatar"><i class="fa-solid fa-user"></i></div>
+            <span class="nav-user-name" id="navUsername">User</span>
+            <i class="fa-solid fa-gear text-muted" style="font-size:11px"></i>
+            <i class="fa-solid fa-circle-check nav-verified"></i>
+          </div>
+          <div class="dropdown-menu">
+            <div style="padding:10px 16px;border-bottom:1px solid var(--border-color)">
+              <div style="font-size:12px;font-weight:700;color:#fff" id="dropdownUserName">User</div>
+              <div style="font-size:11px;color:var(--text-muted)" id="dropdownUserEmail">user@example.com</div>
+            </div>
+            <a class="dropdown-item" href="login/profile.html"><i class="fa-solid fa-user-circle"></i> My Profile</a>
+            <a class="dropdown-item" href="login/profile.html#membership"><i class="fa-solid fa-crown"></i> Membership</a>
+            <div class="dropdown-item" onclick="openCheckoutModal('PRO LIFETIME')" style="cursor:pointer;color:var(--brand-orange)"><i class="fa-solid fa-cart-shopping"></i> Belanja / Upgrade PRO</div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item danger" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hamburger -->
+      <button class="btn-icon hamburger" id="hamburger" onclick="toggleMobileMenu()">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu glass-nav" id="mobileMenu">
+  <button class="nav-link" onclick="showSection('home');closeMobileMenu()"><i class="fa-solid fa-house"></i> Home</button>
+  <button class="nav-link" onclick="openNavModal('price');closeMobileMenu()"><i class="fa-solid fa-tag"></i> Price</button>
+  <button class="nav-link" onclick="openNavModal('updates');closeMobileMenu()"><i class="fa-solid fa-rotate"></i> Updates</button>
+  <button class="nav-link" onclick="openNavModal('docs');closeMobileMenu()"><i class="fa-solid fa-book"></i> Docs</button>
+  <button class="nav-link" onclick="openNavModal('contact');closeMobileMenu()"><i class="fa-solid fa-envelope"></i> Contact</button>
+  <button class="nav-link" onclick="openNavModal('tools');closeMobileMenu()"><i class="fa-solid fa-toolbox"></i> Options Tools</button>
+  <a class="nav-link" href="login/index.html"><i class="fa-solid fa-right-to-bracket"></i> Login / Registrasi</a>
+</div>
+
+<!-- ============================================================ -->
+<!--  MAIN CONTENT                                                  -->
+<!-- ============================================================ -->
+<main class="page-wrapper">
+
+  <!-- ====== HERO ====== -->
+  <section class="hero" style="margin-bottom:0;padding-top:80px">
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-badge" style="position:relative;z-index:1">
+      <i class="fa-solid fa-circle-check text-teal"></i>
+      Support RouterOS v6.x &amp; v7.x — Winbox, WebFig, CLI
+    </div>
+    <h1 class="hero-title" style="position:relative;z-index:1">
+      MikroTik Script
+      <span class="line2">Generator Tools</span>
+    </h1>
+    <p class="hero-subtitle" style="position:relative;z-index:1">
+      Generator script MikroTik RouterOS profesional — Load Balancing PCC, Queue & Burst, Hotspot, Firewall, VPN, Game QoS, PON Calculator dan banyak lagi.
+    </p>
+
+    <!-- Search -->
+    <div class="hero-search" style="position:relative;z-index:1">
+      <i class="fa-solid fa-magnifying-glass text-muted"></i>
+      <input type="text" id="searchInput" placeholder="Cari tool... (mis: PCC, hotspot, queue, wireguard)"
+             oninput="filterTools(this.value)">
+      <button class="btn btn-primary btn-sm" onclick="filterTools(document.getElementById('searchInput').value)">
+        Cari
+      </button>
+    </div>
+
+    <!-- Quick filter tags -->
+    <div class="hero-tags" style="position:relative;z-index:1">
+      <span class="hero-tag" onclick="filterCategory('all')">🌟 Semua Tools (100+)</span>
+      <span class="hero-tag" onclick="filterCategory('recommended')">⭐ Recommended</span>
+      <span class="hero-tag" onclick="filterCategory('lb')">🔀 Load Balancing</span>
+      <span class="hero-tag" onclick="filterCategory('queue')">📊 Queue &amp; PON</span>
+      <span class="hero-tag" onclick="filterCategory('hotspot')">📶 Hotspot &amp; PPPoE</span>
+      <span class="hero-tag" onclick="filterCategory('firewall')">🛡️ Firewall &amp; Security</span>
+      <span class="hero-tag" onclick="filterCategory('vpn')">🔒 VPN &amp; Tunnel</span>
+      <span class="hero-tag" onclick="filterCategory('fast')">⚡ 60 Fast Scripts</span>
+      <span class="hero-tag" onclick="filterCategory('official')">💾 Official Downloads</span>
+      <span class="hero-tag" onclick="clearSearch()">✕ Reset</span>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="stats-row" style="margin-bottom:8px">
+    <div class="stat-item"><div class="stat-value">100+</div><div class="stat-label">Total Tools</div></div>
+    <div class="stat-item"><div class="stat-value">60</div><div class="stat-label">Fast Free Scripts</div></div>
+    <div class="stat-item"><div class="stat-value">15</div><div class="stat-label">Maks ISP (PCC)</div></div>
+    <div class="stat-item"><div class="stat-value">v6+v7</div><div class="stat-label">RouterOS Version</div></div>
+    <div class="stat-item"><div class="stat-value">16</div><div class="stat-label">Official Tools</div></div>
+  </div>
+
+  <!-- ====== TOOLS CATEGORIES ====== -->
+  <div id="toolsContainer" style="display:flex;flex-direction:column;gap:12px;margin-top:12px">
+    <!-- Rendered by JS -->
+    <div style="text-align:center;padding:40px;color:var(--text-muted)">
+      <div class="spinner"></div>
+      <p style="margin-top:12px;font-size:13px">Memuat tools...</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- ============================================================ -->
+<!--  FOOTER                                                        -->
+<!-- ============================================================ -->
+<footer style="background:rgba(0,0,0,0.3);border-top:1px solid var(--border-color);padding:32px 20px;margin-top:40px">
+  <div style="max-width:1400px;margin:0 auto">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:32px;margin-bottom:24px">
+      <div>
+        <div style="font-size:18px;font-weight:800;margin-bottom:8px">Comit<span style="color:var(--brand-orange)">Tools</span> PRO</div>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.7">Generator script MikroTik RouterOS untuk para network engineer dan ISP.</p>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:10px">Quick Links</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <a href="#" style="font-size:12px;color:var(--text-secondary);transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Home</a>
+          <a href="#" onclick="openNavModal('price')" style="font-size:12px;color:var(--text-secondary);transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Harga & Paket</a>
+          <a href="#" onclick="openNavModal('docs')" style="font-size:12px;color:var(--text-secondary);transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Dokumentasi</a>
+          <a href="login/index.html" style="font-size:12px;color:var(--text-secondary);transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Login / Register</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:10px">Contact</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <a href="https://wa.me/6285161386700" target="_blank" style="font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:6px" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'"><i class="fa-brands fa-whatsapp" style="color:#25d366"></i> +62 851-6138-6700</a>
+          <a href="mailto:acm2lp21@gmail.com" style="font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:6px" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'"><i class="fa-solid fa-envelope" style="color:var(--brand-orange)"></i> acm2lp21@gmail.com</a>
+          <a href="https://github.com/ComitIdn" target="_blank" style="font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:6px" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'"><i class="fa-brands fa-github"></i> ComitIdn</a>
+          <a href="https://t.me/comittools" target="_blank" style="font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:6px" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'"><i class="fa-brands fa-telegram" style="color:#0088cc"></i> Telegram</a>
+        </div>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--border-color);padding-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div style="font-size:11px;color:var(--text-muted)">© 2024 ComitTools PRO. For educational & professional use.</div>
+      <div style="font-size:11px;color:var(--text-muted)">RouterOS® is trademark of Mikrotīkls Ltd.</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================ -->
+<!--  MODALS                                                        -->
+<!-- ============================================================ -->
+
+<!-- Tool Generator Modal -->
+<div class="modal-overlay" id="toolModal" onclick="closeModal('toolModal',event)">
+  <div class="modal modal-fullscreen" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title" id="toolModalTitle"><i class="fa-solid fa-bolt text-orange"></i> Generator</div>
+      <button class="modal-close" onclick="closeModal('toolModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="toolModalBody" style="padding:0">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Nav Info Modal (Price / Updates / Docs / Contact / Tools) -->
+<div class="modal-overlay" id="navModal" onclick="closeModal('navModal',event)">
+  <div class="modal modal-xl" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title" id="navModalTitle"></div>
+      <button class="modal-close" onclick="closeModal('navModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="navModalBody"></div>
+  </div>
+</div>
+
+<!-- Paywall / Subscription Required Modal (GET FULL ACCESS / PLEASE SUBSCRIBE / SUBSCRIBE NOW) -->
+<div class="modal-overlay" id="paywallModal" onclick="handlePaywallOverlayClick(event)">
+  <div class="paywall-card" onclick="event.stopPropagation()" style="background:#1e293b;border:1px solid rgba(255,92,0,0.35);border-radius:18px;padding:32px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.85);max-width:420px;width:92%;margin:auto;position:relative;">
+    <button class="modal-close" onclick="closePaywallModal()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:18px;cursor:pointer"><i class="fa-solid fa-xmark"></i></button>
+    <div style="width:56px;height:56px;background:rgba(255,92,0,0.15);border:1px solid rgba(255,92,0,0.4);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#ff5c00;font-size:24px;margin-bottom:16px;">
+      <i class="fa-solid fa-crown"></i>
+    </div>
+    <div class="paywall-title" style="font-size:20px;font-weight:900;color:#ffffff;letter-spacing:0.8px;line-height:1.35;margin-bottom:18px;text-transform:uppercase;">
+      GET FULL ACCESS<br><span style="color:#ff5c00">PLEASE SUBSCRIBE</span>
+    </div>
+    <button type="button" class="paywall-btn-subscribe" onclick="handlePaywallSubscribe()" style="width:100%;background:linear-gradient(135deg,#ff5c00,#ff7a30);color:#ffffff;font-size:15px;font-weight:800;padding:14px 20px;border:none;border-radius:10px;cursor:pointer;box-shadow:0 6px 20px rgba(255,92,0,0.45);text-transform:uppercase;letter-spacing:0.5px;transition:all .2s;">
+      <i class="fa-solid fa-bolt"></i> SUBSCRIBE NOW
+    </button>
+    <div id="paywallStatusMsg" style="margin-top:16px;font-size:12px;color:rgba(255,255,255,0.7);line-height:1.5">
+      <!-- Injected by JS: user status, package details, or login links -->
+    </div>
+  </div>
+</div>
+
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- ============================================================ -->
+<!--  SCRIPTS (Order matters!)                                      -->
+<!-- ============================================================ -->
+<script src="assets/js/generators/lb-pcc-ultimate.js"></script>
+<script src="assets/js/generators/queue-burst.js"></script>
+<script src="assets/js/generators/pon-calc.js"></script>
+<script src="assets/js/generators/firewall.js"></script>
+<script src="assets/js/generators/hotspot.js"></script>
+<script src="assets/js/generators/game-qos.js"></script>
+<script src="assets/js/generators/vpn.js"></script>
+<script src="assets/js/generators/fast-tools.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="assets/js/qrcode-generator.js"></script>
+<script src="assets/js/generators/pro-tools.js"></script>
+<script src="assets/js/generators/official-tools.js"></script>
+<script src="assets/js/tools-catalog.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/app.js"></script>
+
+<!-- Disclaimer toggle -->
+<script>
+  document.getElementById('disclaimerAgree').addEventListener('change', function() {
+    document.getElementById('disclaimerBtn').disabled = !this.checked;
+  });
+  function acceptDisclaimer() {
+    if (!document.getElementById('disclaimerAgree').checked) return;
+    localStorage.setItem('ct_disclaimer_v2', '1');
+    document.getElementById('disclaimerGate').classList.remove('open');
+    setTimeout(() => document.getElementById('disclaimerGate').style.display = 'none', 400);
+  }
+  // Auto-close if already accepted
+  if (localStorage.getItem('ct_disclaimer_v2') === '1') {
+    document.getElementById('disclaimerGate').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>
