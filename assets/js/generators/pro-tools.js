@@ -1065,8 +1065,81 @@ dns,packet,warning cache full, discarding old records</textarea>
       renderForm: function() {
         return `
           <div class="config-section">
-            <div class="config-section-title"><i class="fa-solid fa-palette text-orange"></i> Identitas & Branding Hotspot</div>
-            <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px">Generator template captive portal MikroTik lengkap. Mendukung live preview interaktif dan download paket ZIP utuh siap pasang di Winbox Files.</p>
+            <div class="config-section-title"><i class="fa-solid fa-paintbrush text-orange"></i> Template, Model & Gaya Desain</div>
+            <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px">Pilih model layout, tema warna, dan gaya visual. Semua halaman (login, status, expired, logout) otomatis menyesuaikan serasi.</p>
+
+            <div class="form-row">
+              <div class="form-group mb-2">
+                <label class="form-label">Model / Layout Template</label>
+                <select class="form-control" id="pt_hs_model" onchange="ProTools.updateHotspotLivePreview()">
+                  <option value="card-centered" selected>Card Modern Terpusat (Standard & Rapi)</option>
+                  <option value="split-screen">Split Screen Hero & Form (Dua Kolom)</option>
+                  <option value="minimal-flat">Minimalist Flat Speed (Ultra Ringan)</option>
+                  <option value="voucher-first">Voucher Quick Focus (Input Besar)</option>
+                  <option value="cafe-lounge">Cafe & Resto Lounge (Hospitality Vibe)</option>
+                </select>
+              </div>
+              <div class="form-group mb-2">
+                <label class="form-label">Pilihan Tema Warna</label>
+                <select class="form-control" id="pt_hs_theme" onchange="ProTools.updateHotspotLivePreview()">
+                  <option value="orange" selected>Brand Orange Cyber (Comit Style)</option>
+                  <option value="dark">Minimalist Charcoal Obsidian (Elegan)</option>
+                  <option value="teal">Midnight Ocean Teal (Modern)</option>
+                  <option value="purple">Vibrant Gaming Neon Purple</option>
+                  <option value="emerald">Emerald Forest Green (Fresh Eco)</option>
+                  <option value="sunset">Warm Sunset Coral (Vibrant)</option>
+                  <option value="coffee">Roasted Coffee Brown (Cafe Lounge)</option>
+                  <option value="light">Clean Studio Light (Apple Style)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group mb-2">
+                <label class="form-label">Gaya Kartu (Card Style)</label>
+                <select class="form-control" id="pt_hs_card_style" onchange="ProTools.updateHotspotLivePreview()">
+                  <option value="glassmorphism" selected>Glassmorphism (Efek Kaca Buram Modern)</option>
+                  <option value="solid">Solid Deep Card (Tegas & Kontras Tinggi)</option>
+                  <option value="outline">Tech Cyber Outline (Glow Tipis Modern)</option>
+                </select>
+              </div>
+              <div class="form-group mb-2">
+                <label class="form-label">Lengkung Sudut (Border Radius)</label>
+                <select class="form-control" id="pt_hs_radius" onchange="ProTools.updateHotspotLivePreview()">
+                  <option value="rounded" selected>Rounded Modern (16px)</option>
+                  <option value="pill">Pill Rounded Soft (24px)</option>
+                  <option value="sharp">Sharp Industrial (4px)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group mb-0">
+                <label class="form-label">Ikon / Logo Brand</label>
+                <select class="form-control" id="pt_hs_logo_icon" onchange="ProTools.updateHotspotLivePreview()">
+                  <option value="📶" selected>📶 Sinyal WiFi Modern</option>
+                  <option value="⚡">⚡ Flash High-Speed Bolt</option>
+                  <option value="☕">☕ Cafe / Coffee Cup</option>
+                  <option value="🏪">🏪 Toko / Warung Net</option>
+                  <option value="🎮">🎮 Gaming Zone Hub</option>
+                  <option value="🏨">🏨 Hotel & Villa</option>
+                  <option value="⭐">⭐ VIP Exclusive</option>
+                  <option value="🚀">🚀 Rocket Turbo</option>
+                </select>
+              </div>
+              <div class="form-group mb-0">
+                <label class="form-label">Mode Login</label>
+                <select class="form-control" id="pt_hs_mode" onchange="ProTools.updateHotspotLivePreview()">
+                  <option value="dual" selected>Dual Mode (Tab Voucher + Tab Member)</option>
+                  <option value="voucher">Voucher Saja (Kode = Password)</option>
+                  <option value="member">Member Saja (Username & Password Terpisah)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="config-section">
+            <div class="config-section-title"><i class="fa-solid fa-id-card text-teal"></i> Identitas & Konfigurasi Hotspot</div>
             
             <div class="form-group">
               <label class="form-label">Nama Hotspot / Brand Usaha</label>
@@ -1079,27 +1152,6 @@ dns,packet,warning cache full, discarding old records</textarea>
             </div>
 
             <div class="form-row">
-              <div class="form-group mb-0">
-                <label class="form-label">Pilihan Tema Desain</label>
-                <select class="form-control" id="pt_hs_theme" onchange="ProTools.updateHotspotLivePreview()">
-                  <option value="orange" selected>Brand Orange Cyber (Comit Style)</option>
-                  <option value="dark">Minimalist Charcoal Dark (Elegan)</option>
-                  <option value="teal">Midnight Ocean Teal</option>
-                  <option value="purple">Vibrant Neon Purple</option>
-                  <option value="light">Clean Minimalist Light (Apple Style)</option>
-                </select>
-              </div>
-              <div class="form-group mb-0">
-                <label class="form-label">Mode Login</label>
-                <select class="form-control" id="pt_hs_mode" onchange="ProTools.updateHotspotLivePreview()">
-                  <option value="dual" selected>Dual Mode (Tab Voucher + Tab Member)</option>
-                  <option value="voucher">Voucher Saja (Kode Voucher = Password)</option>
-                  <option value="member">Member Saja (Username & Password Terpisah)</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-row mt-2">
               <div class="form-group mb-0">
                 <label class="form-label">DNS Name Hotspot</label>
                 <input class="form-control form-control-mono" id="pt_hs_dns" value="hotspot.local" oninput="ProTools.updateHotspotLivePreview()">
@@ -1115,12 +1167,25 @@ dns,packet,warning cache full, discarding old records</textarea>
               <input class="form-control" id="pt_hs_marquee" value="⚡ Selamat Datang di wifi@Konut! Beli voucher hubungi CS atau scan QRIS." oninput="ProTools.updateHotspotLivePreview()">
             </div>
 
-            <label class="form-check"><input type="checkbox" id="pt_hs_trial" checked onchange="ProTools.updateHotspotLivePreview()"> Sediakan Tombol Akses Gratis (Trial Login 30 Menit)</label>
-            <label class="form-check mb-0"><input type="checkbox" id="pt_hs_show_pkgs" checked onchange="ProTools.updateHotspotLivePreview()"> Tampilkan Showcase Kartu Paket & Harga Voucher</label>
+            <div class="form-group">
+              <label class="form-label">Catatan Pembayaran / QRIS</label>
+              <input class="form-control" id="pt_hs_payment_note" value="💳 Pembayaran non-tunai: QRIS, DANA, GoPay, OVO, ShopeePay & Tunai di Kasir" oninput="ProTools.updateHotspotLivePreview()">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Syarat & Ketentuan Penggunaan (TOS)</label>
+              <input class="form-control" id="pt_hs_rules" value="Dilarang torrent, konten negatif/pornografi, serta aktivitas hacking & netcut. Pelanggaran berakibat pemutusan akses permanen." oninput="ProTools.updateHotspotLivePreview()">
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
+              <label class="form-check"><input type="checkbox" id="pt_hs_trial" checked onchange="ProTools.updateHotspotLivePreview()"> Sediakan Tombol Akses Gratis (Trial Login 30 Menit)</label>
+              <label class="form-check"><input type="checkbox" id="pt_hs_show_rules" checked onchange="ProTools.updateHotspotLivePreview()"> Tampilkan Accordion Ketentuan Penggunaan (TOS)</label>
+              <label class="form-check mb-0"><input type="checkbox" id="pt_hs_show_pkgs" checked onchange="ProTools.updateHotspotLivePreview()"> Tampilkan Showcase Kartu Paket & Harga Voucher</label>
+            </div>
           </div>
 
           <div class="config-section">
-            <div class="config-section-title"><i class="fa-solid fa-tags text-teal"></i> Daftar Paket Voucher (Price List)</div>
+            <div class="config-section-title"><i class="fa-solid fa-tags text-warning"></i> Daftar Paket Voucher (Price List)</div>
             <div class="form-group mb-2">
               <label class="form-label">Paket 1</label>
               <div class="form-row">
@@ -1173,30 +1238,33 @@ dns,packet,warning cache full, discarding old records</textarea>
 
         return banner(`Hotspot Login Template Setup — ${name}`, ros) +
           `# ================================================================\n` +
-          `# PANDUAN PEMASANGAN TEMPLATE LOGIN HOTSPOT DI MIKROTIK:\n` +
+          `# PANDUAN LENGKAP PEMASANGAN TEMPLATE HOTSPOT DI MIKROTIK ROUTEROS:\n` +
           `# 1. Download Full ZIP dengan menekan tombol [Download Full ZIP] di atas.\n` +
           `# 2. Ekstrak ZIP -> Anda akan mendapatkan folder "hotspot/".\n` +
           `# 3. Buka Winbox -> Klik menu "Files".\n` +
-          `# 4. Drag & Drop folder "hotspot/" ke jendela Files Winbox.\n` +
-          `# 5. Copy & Paste seluruh script di bawah ini ke Terminal Winbox.\n` +
+          `# 4. Drag & Drop folder "hotspot/" ke jendela Files Winbox (ke root direktori).\n` +
+          `# 5. Copy & Paste seluruh script di bawah ini ke New Terminal Winbox.\n` +
           `# ================================================================\n\n` +
-          `# 1. Pastikan DNS Name dan html-directory terpasang pada Server Profile\n` +
+          `# 1. Konfigurasi Server Profile Hotspot & Direktori HTML\n` +
           `/ip hotspot profile set [find] dns-name="${dns}" html-directory=hotspot login-by=http-chap,http-pap,cookie,mac-cookie cookie-lifetime=3d\n\n` +
           `# 2. Konfigurasi Trial Mode (Akses Gratis 30 Menit)\n` +
           `${hasTrial ? `/ip hotspot profile set [find] trial-uptime-limit=30m trial-uptime-reset=1d\n` : `# Trial mode dinonaktifkan\n/ip hotspot profile set [find] !trial-uptime-limit\n`}\n` +
-          `# 3. Walled Garden untuk Bantuan WhatsApp dan Pembelian Voucher\n` +
+          `# 3. Walled Garden Bypass (WhatsApp CS, QRIS, CDN & Portal Akses)\n` +
           `/ip hotspot walled-garden\n` +
           `add dst-host="*whatsapp.com" action=allow comment="CS WhatsApp ComitTools"\n` +
           `add dst-host="*wa.me" action=allow comment="CS WhatsApp Shortlink"\n` +
           `add dst-host="*whatsapp.net" action=allow comment="WhatsApp Media CDN"\n` +
-          `add dst-host="*.gstatic.com" action=allow comment="Google Fonts / CDN Icons"\n\n` +
+          `add dst-host="*midtrans.com" action=allow comment="Payment Gateway QRIS"\n` +
+          `add dst-host="*xendit.co" action=allow comment="Payment Gateway QRIS"\n` +
+          `add dst-host="*.gstatic.com" action=allow comment="Google Static Assets"\n\n` +
           `# 4. Status Log Konfirmasi\n` +
           `:log info "✅ Template Hotspot Captive Portal [${name}] siap digunakan!"\n` +
           `:put "================================================================"\n` +
           `:put " Hotspot Portal Berhasil Dikonfigurasi!"\n` +
           `:put " Brand Name : ${name}"\n` +
           `:put " Portal URL : http://${dns}"\n` +
-          `:put " WhatsApp   : ${wa}"\n` +
+          `:put " CS WhatsApp: ${wa}"\n` +
+          `:put " Folder HTML: hotspot/"\n` +
           `:put "================================================================"\n`;
       }
     },
@@ -1616,26 +1684,33 @@ dns,packet,warning cache full, discarding old records</textarea>
         <button class="btn btn-secondary btn-sm" onclick="ProTools.downloadHotspotHtml()" title="Download login.html Saja">
           <i class="fa-solid fa-file-code"></i> login.html
         </button>
+        <button class="btn btn-secondary btn-sm" onclick="ProTools.downloadHotspotStatusHtml()" title="Download status.html Saja">
+          <i class="fa-solid fa-file-lines"></i> status.html
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="ProTools.downloadHotspotExpiredHtml()" title="Download expired.html Saja">
+          <i class="fa-solid fa-hourglass-end"></i> expired.html
+        </button>
       `;
       extraPreviewArea = `
         <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:10px 14px;margin-bottom:12px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px">
-            <div style="display:flex;gap:4px">
-              <button class="btn btn-teal btn-sm" id="pt_tab_hs_preview" onclick="ProTools.switchHotspotTab('preview')" style="font-weight:700">
-                <i class="fa-solid fa-eye"></i> Live Visual Preview
-              </button>
-              <button class="btn btn-secondary btn-sm" id="pt_tab_hs_script" onclick="ProTools.switchHotspotTab('script')" style="font-weight:700">
-                <i class="fa-solid fa-terminal"></i> MikroTik Script Output
-              </button>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+            <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+              <span style="font-size:11px;color:var(--text-muted);font-weight:700;margin-right:2px"><i class="fa-solid fa-eye text-teal"></i> Halaman:</span>
+              <button class="btn btn-teal btn-xs" id="pt_btn_page_login" onclick="ProTools.switchHotspotPage('login')" style="font-weight:700">login.html</button>
+              <button class="btn btn-secondary btn-xs" id="pt_btn_page_status" onclick="ProTools.switchHotspotPage('status')">status.html</button>
+              <button class="btn btn-secondary btn-xs" id="pt_btn_page_expired" onclick="ProTools.switchHotspotPage('expired')">expired.html</button>
+              <button class="btn btn-secondary btn-xs" id="pt_btn_page_logout" onclick="ProTools.switchHotspotPage('logout')">logout.html</button>
+              <button class="btn btn-secondary btn-xs" id="pt_btn_page_script" onclick="ProTools.switchHotspotPage('script')"><i class="fa-solid fa-terminal"></i> Script RSC</button>
             </div>
             <div id="pt_hs_viewport_controls" style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-muted)">
               <span>Layar:</span>
               <button class="btn btn-secondary btn-xs" onclick="ProTools.setHotspotIframeWidth('380px')"><i class="fa-solid fa-mobile-screen"></i> 380px (HP)</button>
+              <button class="btn btn-secondary btn-xs" onclick="ProTools.setHotspotIframeWidth('520px')"><i class="fa-solid fa-tablet-screen-button"></i> 520px (Tablet)</button>
               <button class="btn btn-secondary btn-xs" onclick="ProTools.setHotspotIframeWidth('100%')"><i class="fa-solid fa-desktop"></i> Full (Desktop)</button>
             </div>
           </div>
-          <div id="pt_hs_iframe_wrap" style="background:#090d16;border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden;display:flex;justify-content:center;padding:12px;min-height:480px">
-            <iframe id="pt_hs_live_iframe" style="width:380px;height:520px;border:none;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.6);transition:width .2s;background:#0f172a;" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
+          <div id="pt_hs_iframe_wrap" style="background:#090d16;border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden;display:flex;justify-content:center;padding:12px;min-height:500px">
+            <iframe id="pt_hs_live_iframe" style="width:380px;height:540px;border:none;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.6);transition:width .2s;background:#0f172a;" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
           </div>
         </div>
       `;
@@ -1885,15 +1960,22 @@ dns,packet,warning cache full, discarding old records</textarea>
 
   // Helper to extract hotspot config from DOM
   function getHotspotConfig() {
-    const name     = document.getElementById('pt_hs_name')?.value || 'wifi@Konut - Baharuddin Net';
-    const slogan   = document.getElementById('pt_hs_slogan')?.value || 'Internet Cepat, Murah & Stabil Tanpa Batas';
-    const theme    = document.getElementById('pt_hs_theme')?.value || 'orange';
-    const mode     = document.getElementById('pt_hs_mode')?.value || 'dual';
-    const dns      = document.getElementById('pt_hs_dns')?.value || 'hotspot.local';
-    const wa       = document.getElementById('pt_hs_wa')?.value || '+62 813-5514-2432';
-    const marquee  = document.getElementById('pt_hs_marquee')?.value || '⚡ Selamat Datang! Beli voucher hubungi CS atau scan QRIS.';
-    const hasTrial = document.getElementById('pt_hs_trial')?.checked !== false;
-    const showPkgs = document.getElementById('pt_hs_show_pkgs')?.checked !== false;
+    const model       = document.getElementById('pt_hs_model')?.value || 'card-centered';
+    const theme       = document.getElementById('pt_hs_theme')?.value || 'orange';
+    const cardStyle   = document.getElementById('pt_hs_card_style')?.value || 'glassmorphism';
+    const radius      = document.getElementById('pt_hs_radius')?.value || 'rounded';
+    const logoIcon    = document.getElementById('pt_hs_logo_icon')?.value || '📶';
+    const name        = document.getElementById('pt_hs_name')?.value || 'wifi@Konut - Baharuddin Net';
+    const slogan      = document.getElementById('pt_hs_slogan')?.value || 'Akses Internet Cepat, Murah & Stabil Tanpa Batas';
+    const mode        = document.getElementById('pt_hs_mode')?.value || 'dual';
+    const dns         = document.getElementById('pt_hs_dns')?.value || 'hotspot.local';
+    const wa          = document.getElementById('pt_hs_wa')?.value || '+62 813-5514-2432';
+    const marquee     = document.getElementById('pt_hs_marquee')?.value || '⚡ Selamat Datang di wifi@Konut! Beli voucher hubungi CS atau scan QRIS.';
+    const paymentNote = document.getElementById('pt_hs_payment_note')?.value || '💳 Pembayaran non-tunai: QRIS, DANA, GoPay, OVO, ShopeePay & Tunai di Kasir';
+    const rulesText   = document.getElementById('pt_hs_rules')?.value || 'Dilarang torrent, konten negatif/pornografi, serta aktivitas hacking & netcut. Pelanggaran berakibat pemutusan akses permanen.';
+    const hasTrial    = document.getElementById('pt_hs_trial')?.checked !== false;
+    const showRules   = document.getElementById('pt_hs_show_rules')?.checked !== false;
+    const showPkgs    = document.getElementById('pt_hs_show_pkgs')?.checked !== false;
 
     const pkgs = [
       { name: document.getElementById('pt_hs_p1_name')?.value || '2 Jam', price: document.getElementById('pt_hs_p1_price')?.value || 'Rp 2.000', spd: document.getElementById('pt_hs_p1_spd')?.value || 'Up to 5 Mbps' },
@@ -1904,22 +1986,169 @@ dns,packet,warning cache full, discarding old records</textarea>
     ];
 
     const themeColors = {
-      orange: { primary: '#ff5c00', hover: '#ff7a30', bg: '#0b1120', card: '#162033', text: '#f8fafc', muted: '#94a3b8', border: 'rgba(255,255,255,0.08)', accent: '#3fd3c0' },
-      dark:   { primary: '#6366f1', hover: '#818cf8', bg: '#09090b', card: '#18181b', text: '#fafafa', muted: '#a1a1aa', border: 'rgba(255,255,255,0.08)', accent: '#38bdf8' },
-      teal:   { primary: '#0ea5e9', hover: '#38bdf8', bg: '#04151f', card: '#0b2535', text: '#f0f9ff', muted: '#94a3b8', border: 'rgba(255,255,255,0.08)', accent: '#2dd4bf' },
-      purple: { primary: '#a855f7', hover: '#c084fc', bg: '#0d0b18', card: '#1a162e', text: '#faf5ff', muted: '#a8a29e', border: 'rgba(255,255,255,0.08)', accent: '#f472b6' },
-      light:  { primary: '#2563eb', hover: '#1d4ed8', bg: '#f1f5f9', card: '#ffffff', text: '#0f172a', muted: '#64748b', border: '#e2e8f0', accent: '#0284c7' }
+      orange: { primary: '#ff5c00', hover: '#ff7526', bg: '#0b1120', card: '#151f32', glass: 'rgba(21, 31, 50, 0.78)', text: '#f8fafc', muted: '#94a3b8', border: 'rgba(255,255,255,0.09)', accent: '#3fd3c0', glow: 'rgba(255, 92, 0, 0.35)' },
+      dark:   { primary: '#6366f1', hover: '#818cf8', bg: '#09090b', card: '#18181b', glass: 'rgba(24, 24, 27, 0.82)', text: '#fafafa', muted: '#a1a1aa', border: 'rgba(255,255,255,0.09)', accent: '#38bdf8', glow: 'rgba(99, 102, 241, 0.35)' },
+      teal:   { primary: '#0ea5e9', hover: '#38bdf8', bg: '#04151f', card: '#0b2535', glass: 'rgba(11, 37, 53, 0.80)', text: '#f0f9ff', muted: '#94a3b8', border: 'rgba(255,255,255,0.09)', accent: '#2dd4bf', glow: 'rgba(14, 165, 233, 0.35)' },
+      purple: { primary: '#a855f7', hover: '#c084fc', bg: '#0d0b18', card: '#1a162e', glass: 'rgba(26, 22, 46, 0.82)', text: '#faf5ff', muted: '#a8a29e', border: 'rgba(255,255,255,0.09)', accent: '#f472b6', glow: 'rgba(168, 85, 247, 0.35)' },
+      emerald:{ primary: '#10b981', hover: '#34d399', bg: '#041712', card: '#0a2920', glass: 'rgba(10, 41, 32, 0.80)', text: '#ecfdf5', muted: '#6ee7b7', border: 'rgba(255,255,255,0.09)', accent: '#34d399', glow: 'rgba(16, 185, 129, 0.35)' },
+      sunset: { primary: '#f43f5e', hover: '#fb7185', bg: '#170b14', card: '#281423', glass: 'rgba(40, 20, 35, 0.80)', text: '#fff1f2', muted: '#fda4af', border: 'rgba(255,255,255,0.09)', accent: '#fbbf24', glow: 'rgba(244, 63, 94, 0.35)' },
+      coffee: { primary: '#d97706', hover: '#f59e0b', bg: '#18120d', card: '#261d15', glass: 'rgba(38, 29, 21, 0.82)', text: '#fef3c7', muted: '#d6d3d1', border: 'rgba(255,255,255,0.09)', accent: '#fbbf24', glow: 'rgba(217, 119, 6, 0.35)' },
+      light:  { primary: '#2563eb', hover: '#1d4ed8', bg: '#f1f5f9', card: '#ffffff', glass: 'rgba(255, 255, 255, 0.90)', text: '#0f172a', muted: '#64748b', border: '#e2e8f0', accent: '#0284c7', glow: 'rgba(37, 99, 235, 0.2)' }
     };
 
     const c = themeColors[theme] || themeColors.orange;
-    return { name, slogan, theme, mode, dns, wa, marquee, hasTrial, showPkgs, pkgs, c };
+    return { model, theme, cardStyle, radius, logoIcon, name, slogan, mode, dns, wa, marquee, paymentNote, rulesText, hasTrial, showRules, showPkgs, pkgs, c };
   }
 
-  // Generates standalone complete login.html template
+  // Generates complete login.html template with selected model, theme & style
   function getHotspotHtmlCode() {
     const cfg = getHotspotConfig();
     const c = cfg.c;
     const waClean = cfg.wa.replace(/[^0-9]/g, '');
+    const cardClass = `card card-${cfg.cardStyle}`;
+
+    const brandHeader = `
+      <div class="brand-header">
+        <div class="brand-logo">${cfg.logoIcon}</div>
+        <h1 class="brand-title">${cfg.name}</h1>
+        <p class="brand-slogan">${cfg.slogan}</p>
+        ${cfg.model === 'cafe-lounge' ? '<div class="cafe-badge">☕ FREE HIGH-SPEED WI-FI FOR CUSTOMERS</div>' : ''}
+      </div>
+    `;
+
+    const marqueeBlock = cfg.marquee ? `
+      <div class="marquee-box">
+        <marquee behavior="scroll" direction="left" scrollamount="4">${cfg.marquee}</marquee>
+      </div>
+    ` : '';
+
+    const errorBlock = `
+      $(if error)
+      <div class="alert-error">
+        <span>⚠️ $(error)</span>
+      </div>
+      $(endif)
+    `;
+
+    const formBlock = `
+      <div class="${cardClass} login-card">
+        ${cfg.mode === 'dual' ? `
+        <div class="login-tabs">
+          <button type="button" class="tab-btn active" id="tabVoucher" onclick="switchLoginMode('voucher')">KODE VOUCHER</button>
+          <button type="button" class="tab-btn" id="tabMember" onclick="switchLoginMode('member')">MEMBER / KELUARGA</button>
+        </div>` : ''}
+
+        $(if chap-id)
+        <form name="sendin" action="$(link-login-only)" method="post" style="display:none">
+          <input type="hidden" name="username" />
+          <input type="hidden" name="password" />
+          <input type="hidden" name="dst" value="$(link-orig)" />
+          <input type="hidden" name="popup" value="true" />
+        </form>
+        $(endif)
+
+        <form name="login" action="$(link-login-only)" method="post" onsubmit="return handleHotspotSubmit();">
+          <input type="hidden" name="dst" value="$(link-orig)" />
+          <input type="hidden" name="popup" value="true" />
+
+          ${cfg.mode !== 'member' ? `
+          <div id="voucherSection">
+            <div class="form-group">
+              <label class="form-label">${cfg.model === 'voucher-first' ? '🔑 Masukkan Kode Voucher Internet:' : 'Kode Voucher'}</label>
+              <input class="form-input form-code ${cfg.model === 'voucher-first' ? 'code-large' : ''}" id="voucherCode" type="text" placeholder="MASUKKAN KODE VOUCHER" value="$(username)" autofocus autocomplete="off" autocapitalize="characters" />
+              <small class="form-help">Kode voucher biasanya sama dengan password.</small>
+            </div>
+          </div>` : ''}
+
+          ${cfg.mode !== 'voucher' ? `
+          <div id="memberSection" style="${cfg.mode === 'dual' ? 'display:none;' : ''}">
+            <div class="form-group">
+              <label class="form-label">Username</label>
+              <input class="form-input" id="memberUser" type="text" placeholder="Username Member" autocomplete="username" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <input class="form-input" id="memberPass" type="password" placeholder="Password Member" autocomplete="current-password" />
+            </div>
+          </div>` : ''}
+
+          <input type="hidden" name="username" id="realUsername" />
+          <input type="hidden" name="password" id="realPassword" />
+
+          <button type="submit" class="btn btn-login">MASUK SEKARANG</button>
+        </form>
+
+        ${cfg.hasTrial ? `
+        $(if trial == 'yes')
+        <a href="$(link-login-only)?dst=$(link-orig-esc)&amp;username=T-$(mac-esc)" class="btn btn-trial">
+          ⚡ COBA GRATIS (TRIAL 30 MENIT)
+        </a>
+        $(endif)` : ''}
+
+        ${cfg.paymentNote ? `
+        <div class="payment-note">
+          <small>${cfg.paymentNote}</small>
+        </div>` : ''}
+
+        ${cfg.showRules ? `
+        <details class="rules-accordion">
+          <summary>📋 Syarat &amp; Ketentuan Hotspot</summary>
+          <div class="rules-body">${cfg.rulesText}</div>
+        </details>` : ''}
+      </div>
+    `;
+
+    const pricingBlock = cfg.showPkgs ? `
+      <div class="${cardClass} card-pricing">
+        <div class="pricing-title">Daftar Paket &amp; Harga Voucher</div>
+        <div class="pricing-grid">
+          ${cfg.pkgs.map(p => `
+          <div class="price-item">
+            <div class="price-dur">${p.name}</div>
+            <div class="price-val">${p.price}</div>
+            <div class="price-spd">${p.spd}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+    ` : '';
+
+    const footerBlock = `
+      <div class="footer-contact">
+        <a href="https://wa.me/${waClean}?text=Halo%20Admin%20${encodeURIComponent(cfg.name)},%20saya%20mau%20beli%20voucher%20hotspot" target="_blank" class="btn-wa">
+          💬 Beli Voucher / Bantuan CS: <b>${cfg.wa}</b>
+        </a>
+        <div class="copyright">&copy; 2026 ${cfg.name} · Powered by MikroTik RouterOS</div>
+      </div>
+    `;
+
+    let contentBody = '';
+    if (cfg.model === 'split-screen') {
+      contentBody = `
+        <div class="portal-wrapper model-split-screen">
+          <div class="split-col split-left">
+            ${brandHeader}
+            ${marqueeBlock}
+            ${pricingBlock}
+          </div>
+          <div class="split-col split-right">
+            ${errorBlock}
+            ${formBlock}
+            ${footerBlock}
+          </div>
+        </div>
+      `;
+    } else {
+      contentBody = `
+        <div class="portal-wrapper model-${cfg.model}">
+          ${brandHeader}
+          ${marqueeBlock}
+          ${errorBlock}
+          ${formBlock}
+          ${pricingBlock}
+          ${footerBlock}
+        </div>
+      `;
+    }
 
     return `<!DOCTYPE html>
 <html lang="id">
@@ -1929,85 +2158,183 @@ dns,packet,warning cache full, discarding old records</textarea>
   <title>${cfg.name} — Login Portal</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="theme-${cfg.theme}">
-  <div class="portal-wrapper">
-    <!-- Brand Header -->
+<body class="theme-${cfg.theme} radius-${cfg.radius}">
+  ${contentBody}
+
+  <script src="md5.js"></script>
+  <script>
+    var currentMode = '${cfg.mode === "member" ? "member" : "voucher"}';
+
+    function switchLoginMode(mode) {
+      currentMode = mode;
+      var vSec = document.getElementById('voucherSection');
+      var mSec = document.getElementById('memberSection');
+      var tV = document.getElementById('tabVoucher');
+      var tM = document.getElementById('tabMember');
+      if (mode === 'voucher') {
+        if (vSec) vSec.style.display = 'block';
+        if (mSec) mSec.style.display = 'none';
+        if (tV) tV.classList.add('active');
+        if (tM) tM.classList.remove('active');
+        var vc = document.getElementById('voucherCode');
+        if (vc) vc.focus();
+      } else {
+        if (vSec) vSec.style.display = 'none';
+        if (mSec) mSec.style.display = 'block';
+        if (tV) tV.classList.remove('active');
+        if (tM) tM.classList.add('active');
+        var mu = document.getElementById('memberUser');
+        if (mu) mu.focus();
+      }
+    }
+
+    function handleHotspotSubmit() {
+      var uField = document.getElementById('realUsername');
+      var pField = document.getElementById('realPassword');
+      var user = '', pass = '';
+
+      if (currentMode === 'voucher') {
+        var code = (document.getElementById('voucherCode')?.value || '').trim();
+        if (!code) { alert('Silakan masukkan kode voucher Anda.'); return false; }
+        user = code;
+        pass = code;
+      } else {
+        user = (document.getElementById('memberUser')?.value || '').trim();
+        pass = (document.getElementById('memberPass')?.value || '');
+        if (!user || !pass) { alert('Silakan masukkan username dan password member.'); return false; }
+      }
+
+      uField.value = user;
+      pField.value = pass;
+
+      if (typeof hex_md5 === 'function' && document.sendin) {
+        var chapId = '$(chap-id)';
+        var chapChallenge = '$(chap-challenge)';
+        if (chapId && chapId.indexOf('$') === -1) {
+          document.sendin.username.value = user;
+          document.sendin.password.value = hex_md5(chapId + pass + chapChallenge);
+          document.sendin.submit();
+          return false;
+        }
+      }
+      return true;
+    }
+  </script>
+</body>
+</html>`;
+  }
+
+  // Generates status.html template with matched styling
+  function getHotspotStatusHtmlCode() {
+    const cfg = getHotspotConfig();
+    const c = cfg.c;
+    const waClean = cfg.wa.replace(/[^0-9]/g, '');
+    const cardClass = `card card-${cfg.cardStyle}`;
+
+    return `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="$(refresh-timeout)">
+  <title>${cfg.name} — Status Koneksi Internet</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-${cfg.theme} radius-${cfg.radius}">
+  <div class="portal-wrapper model-${cfg.model}">
     <div class="brand-header">
-      <div class="brand-logo">📶</div>
-      <h1 class="brand-title">${cfg.name}</h1>
-      <p class="brand-slogan">${cfg.slogan}</p>
+      <div class="brand-logo" style="background:#22c55e;box-shadow:0 8px 24px rgba(34,197,94,0.4)">✅</div>
+      <h1 class="brand-title">Internet Terhubung</h1>
+      <p class="brand-slogan">${cfg.name} — Layanan Aktif</p>
     </div>
 
-    ${cfg.marquee ? `
-    <!-- Announcement Bar -->
-    <div class="marquee-box">
-      <marquee behavior="scroll" direction="left" scrollamount="4">${cfg.marquee}</marquee>
-    </div>` : ''}
+    <div class="${cardClass}">
+      <div class="status-table">
+        <div class="status-row highlight"><span>User Akun:</span><b style="color:var(--primary)">$(username)</b></div>
+        <div class="status-row"><span>Alamat IP:</span><code>$(ip)</code></div>
+        <div class="status-row"><span>Alamat MAC:</span><code>$(mac)</code></div>
+        <div class="status-row"><span>Waktu Terhubung:</span><b>$(uptime)</b></div>
+        $(if session-time-left)
+        <div class="status-row highlight"><span>Sisa Waktu:</span><b style="color:#ff5c00">$(session-time-left)</b></div>
+        $(endif)
+        <div class="status-row"><span>Total Upload:</span><b>$(bytes-out-nice)</b></div>
+        <div class="status-row"><span>Total Download:</span><b>$(bytes-in-nice)</b></div>
+        $(if remain-bytes-total-nice)
+        <div class="status-row highlight"><span>Sisa Kuota:</span><b style="color:#22c55e">$(remain-bytes-total-nice)</b></div>
+        $(endif)
+      </div>
 
-    <!-- MikroTik Error Message -->
-    $(if error)
-    <div class="alert-error">
-      <span>⚠️ $(error)</span>
+      <div style="display:flex;gap:8px;margin-top:20px">
+        <a href="$(link-status)" class="btn btn-trial" style="flex:1;text-align:center;margin-top:0">
+          🔄 REFRESH
+        </a>
+        <form action="$(link-logout)" name="logout" method="post" style="flex:1;margin:0">
+          <input type="hidden" name="erase-cookie" value="on">
+          <button type="submit" class="btn btn-logout" style="margin:0;width:100%">
+            🚪 LOGOUT
+          </button>
+        </form>
+      </div>
     </div>
-    $(endif)
 
-    <!-- Login Card -->
-    <div class="login-card">
-      ${cfg.mode === 'dual' ? `
-      <!-- Tab Switcher -->
-      <div class="login-tabs">
-        <button type="button" class="tab-btn active" id="tabVoucher" onclick="switchLoginMode('voucher')">KODE VOUCHER</button>
-        <button type="button" class="tab-btn" id="tabMember" onclick="switchLoginMode('member')">MEMBER</button>
-      </div>` : ''}
-
-      <!-- Form MikroTik -->
-      <form name="sendin" action="$(link-login-only)" method="post" onsubmit="return handleHotspotSubmit();">
-        <input type="hidden" name="dst" value="$(link-orig)" />
-        <input type="hidden" name="popup" value="true" />
-
-        ${cfg.mode !== 'member' ? `
-        <!-- Voucher Section -->
-        <div id="voucherSection">
-          <div class="form-group">
-            <label class="form-label">Kode Voucher</label>
-            <input class="form-input form-code" id="voucherCode" type="text" placeholder="MASUKKAN KODE VOUCHER" value="$(username)" autofocus autocomplete="off" autocapitalize="characters" />
-            <small class="form-help">Kode voucher biasanya sama dengan password.</small>
-          </div>
-        </div>` : ''}
-
-        ${cfg.mode !== 'voucher' ? `
-        <!-- Member Section -->
-        <div id="memberSection" style="${cfg.mode === 'dual' ? 'display:none;' : ''}">
-          <div class="form-group">
-            <label class="form-label">Username</label>
-            <input class="form-input" id="memberUser" type="text" placeholder="Username Member" autocomplete="username" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Password</label>
-            <input class="form-input" id="memberPass" type="password" placeholder="Password Member" autocomplete="current-password" />
-          </div>
-        </div>` : ''}
-
-        <!-- Hidden credentials sent to RouterOS -->
-        <input type="hidden" name="username" id="realUsername" />
-        <input type="hidden" name="password" id="realPassword" />
-
-        <button type="submit" class="btn btn-login">MASUK SEKARANG</button>
-      </form>
-
-      ${cfg.hasTrial ? `
-      <!-- Trial Free Login -->
-      $(if trial == 'yes')
-      <a href="$(link-login-only)?dst=$(link-orig-esc)&amp;username=T-$(mac-esc)" class="btn btn-trial">
-        ⚡ COBA GRATIS (30 MENIT)
+    <div class="footer-contact">
+      <a href="https://wa.me/${waClean}?text=Halo%20Admin%20${encodeURIComponent(cfg.name)},%20bantuan%20koneksi%20hotspot%20user:%20$(username)" target="_blank" class="btn-wa">
+        💬 Bantuan CS / Operator: <b>${cfg.wa}</b>
       </a>
-      $(endif)` : ''}
+      <div class="copyright">&copy; 2026 ${cfg.name} · Powered by MikroTik RouterOS</div>
+    </div>
+  </div>
+</body>
+</html>`;
+  }
+
+  // Generates expired.html template with matched styling
+  function getHotspotExpiredHtmlCode() {
+    const cfg = getHotspotConfig();
+    const c = cfg.c;
+    const waClean = cfg.wa.replace(/[^0-9]/g, '');
+    const cardClass = `card card-${cfg.cardStyle}`;
+
+    return `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${cfg.name} — Masa Aktif / Kuota Habis</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-${cfg.theme} radius-${cfg.radius}">
+  <div class="portal-wrapper model-${cfg.model}">
+    <div class="brand-header">
+      <div class="brand-logo" style="background:#ef4444;box-shadow:0 8px 24px rgba(239,68,68,0.4)">⏳</div>
+      <h1 class="brand-title">Masa Aktif / Kuota Habis</h1>
+      <p class="brand-slogan">${cfg.name}</p>
+    </div>
+
+    <div class="${cardClass}" style="text-align:center">
+      <div class="alert-error" style="margin-bottom:16px">
+        ⚠️ <b>Akses Internet Telah Berakhir</b>
+        <div style="font-size:11px;margin-top:4px">Voucher atau kuota paket internet Anda sudah habis terpakai.</div>
+      </div>
+
+      <div class="status-table" style="margin-bottom:18px;text-align:left">
+        <div class="status-row"><span>Kode Akun:</span><b>$(username)</b></div>
+        <div class="status-row"><span>Status:</span><b style="color:#ef4444">KADALUARSA (EXPIRED)</b></div>
+        <div class="status-row"><span>Alamat MAC:</span><code>$(mac)</code></div>
+      </div>
+
+      <a href="https://wa.me/${waClean}?text=Halo%20Admin%20${encodeURIComponent(cfg.name)},%20voucher%20hotspot%20saya%20sudah%20habis.%20Saya%20mau%20beli%20voucher%20baru." target="_blank" class="btn btn-login" style="background:#22c55e;box-shadow:0 6px 20px rgba(34,197,94,0.35);margin-bottom:10px">
+        💬 BELI VOUCHER BARU VIA WHATSAPP
+      </a>
+
+      <a href="$(link-login)" class="btn btn-trial" style="margin-top:0">
+        🔑 LOGIN DENGAN VOUCHER LAIN
+      </a>
     </div>
 
     ${cfg.showPkgs ? `
-    <!-- Voucher Price List -->
-    <div class="card-pricing">
-      <div class="pricing-title">Daftar Paket &amp; Harga Voucher</div>
+    <div class="${cardClass} card-pricing">
+      <div class="pricing-title">Pilihan Paket &amp; Harga Voucher Baru</div>
       <div class="pricing-grid">
         ${cfg.pkgs.map(p => `
         <div class="price-item">
@@ -2018,108 +2345,20 @@ dns,packet,warning cache full, discarding old records</textarea>
       </div>
     </div>` : ''}
 
-    <!-- CS WhatsApp Button -->
     <div class="footer-contact">
-      <a href="https://wa.me/${waClean}?text=Halo%20Admin%20${encodeURIComponent(cfg.name)},%20saya%20mau%20beli%20voucher%20hotspot" target="_blank" class="btn-wa">
-        💬 Beli Voucher / Bantuan CS: <b>${cfg.wa}</b>
-      </a>
       <div class="copyright">&copy; 2026 ${cfg.name} · Powered by MikroTik RouterOS</div>
     </div>
   </div>
-
-  <script src="md5.js"></script>
-  <script>
-    let currentMode = '${cfg.mode === "member" ? "member" : "voucher"}';
-
-    function switchLoginMode(mode) {
-      currentMode = mode;
-      const vSec = document.getElementById('voucherSection');
-      const mSec = document.getElementById('memberSection');
-      const tV = document.getElementById('tabVoucher');
-      const tM = document.getElementById('tabMember');
-      if (mode === 'voucher') {
-        if (vSec) vSec.style.display = 'block';
-        if (mSec) mSec.style.display = 'none';
-        if (tV) tV.classList.add('active');
-        if (tM) tM.classList.remove('active');
-        document.getElementById('voucherCode')?.focus();
-      } else {
-        if (vSec) vSec.style.display = 'none';
-        if (mSec) mSec.style.display = 'block';
-        if (tV) tV.classList.remove('active');
-        if (tM) tM.classList.add('active');
-        document.getElementById('memberUser')?.focus();
-      }
-    }
-
-    function handleHotspotSubmit() {
-      const uField = document.getElementById('realUsername');
-      const pField = document.getElementById('realPassword');
-
-      if (currentMode === 'voucher') {
-        const code = (document.getElementById('voucherCode')?.value || '').trim();
-        if (!code) { alert('Silakan masukkan kode voucher Anda.'); return false; }
-        uField.value = code;
-        pField.value = code; // Voucher: username = password
-      } else {
-        const user = (document.getElementById('memberUser')?.value || '').trim();
-        const pass = (document.getElementById('memberPass')?.value || '');
-        if (!user || !pass) { alert('Silakan masukkan username dan password member.'); return false; }
-        uField.value = user;
-        pField.value = pass;
-      }
-      return true;
-    }
-  </script>
 </body>
 </html>`;
   }
 
-  // Generates status.html template
-  function getHotspotStatusHtmlCode() {
-    const cfg = getHotspotConfig();
-    return `<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${cfg.name} — Status Koneksi</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body class="theme-${cfg.theme}">
-  <div class="portal-wrapper">
-    <div class="brand-header">
-      <div class="brand-logo" style="background:#22c55e">✅</div>
-      <h1 class="brand-title">Internet Terhubung</h1>
-      <p class="brand-slogan">${cfg.name}</p>
-    </div>
-
-    <div class="login-card">
-      <div class="status-table">
-        <div class="status-row"><span>User Akun:</span><b>$(username)</b></div>
-        <div class="status-row"><span>IP Address:</span><code>$(ip)</code></div>
-        <div class="status-row"><span>MAC Address:</span><code>$(mac)</code></div>
-        <div class="status-row"><span>Waktu Terhubung:</span><b>$(uptime)</b></div>
-        $(if session-time-left)
-        <div class="status-row highlight"><span>Sisa Waktu:</span><b style="color:#ff5c00">$(session-time-left)</b></div>
-        $(endif)
-        <div class="status-row"><span>Total Upload:</span><b>$(bytes-out-nice)</b></div>
-        <div class="status-row"><span>Total Download:</span><b>$(bytes-in-nice)</b></div>
-      </div>
-
-      <form action="$(link-logout)" name="logout" method="post" style="margin-top:20px">
-        <input type="hidden" name="erase-cookie" value="on">
-        <button type="submit" class="btn btn-logout">PUTUSKAN KONEKSI (LOGOUT)</button>
-      </form>
-    </div>
-  </div>
-</body>
-</html>`;
-  }
-
-  // Generates logout.html template
+  // Generates logout.html template with matched styling
   function getHotspotLogoutHtmlCode() {
     const cfg = getHotspotConfig();
+    const c = cfg.c;
+    const cardClass = `card card-${cfg.cardStyle}`;
+
     return `<!DOCTYPE html>
 <html lang="id">
 <head>
@@ -2128,162 +2367,341 @@ dns,packet,warning cache full, discarding old records</textarea>
   <title>${cfg.name} — Anda Telah Logout</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="theme-${cfg.theme}">
-  <div class="portal-wrapper">
+<body class="theme-${cfg.theme} radius-${cfg.radius}">
+  <div class="portal-wrapper model-${cfg.model}">
     <div class="brand-header">
       <div class="brand-logo">👋</div>
       <h1 class="brand-title">Sampai Jumpa!</h1>
-      <p class="brand-slogan">Koneksi internet Anda telah diakhiri.</p>
+      <p class="brand-slogan">Koneksi internet Anda telah berhasil diakhiri.</p>
     </div>
 
-    <div class="login-card" style="text-align:center">
-      <p style="font-size:13px;color:#94a3b8;margin-bottom:20px;line-height:1.6">
+    <div class="${cardClass}" style="text-align:center">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6">
         Terima kasih telah menggunakan layanan internet dari <b>${cfg.name}</b>.
       </p>
-      <a href="$(link-login)" class="btn btn-login">LOGIN KEMBALI</a>
+
+      <div class="status-table" style="margin-bottom:18px;text-align:left">
+        <div class="status-row"><span>User Akun:</span><b>$(username)</b></div>
+        <div class="status-row"><span>Total Pemakaian:</span><b>$(uptime)</b></div>
+        <div class="status-row"><span>Data Terkirim:</span><b>$(bytes-out-nice)</b></div>
+        <div class="status-row"><span>Data Diterima:</span><b>$(bytes-in-nice)</b></div>
+      </div>
+
+      <a href="$(link-login)" class="btn btn-login">
+        🔑 LOGIN KEMBALI
+      </a>
+    </div>
+
+    <div class="footer-contact">
+      <div class="copyright">&copy; 2026 ${cfg.name} · Powered by MikroTik RouterOS</div>
     </div>
   </div>
 </body>
 </html>`;
   }
 
-  // Generates style.css template
+  // Generates alogin.html auto-redirect template
+  function getHotspotAloginHtmlCode() {
+    const cfg = getHotspotConfig();
+    const cardClass = `card card-${cfg.cardStyle}`;
+
+    return `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="2; url=$(link-redirect)">
+  <title>${cfg.name} — Berhasil Terhubung</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    function startRedirect() {
+      setTimeout(function() {
+        location.href = '$(link-redirect)';
+      }, 1500);
+    }
+  </script>
+</head>
+<body class="theme-${cfg.theme} radius-${cfg.radius}" onload="startRedirect()">
+  <div class="portal-wrapper model-${cfg.model}">
+    <div class="brand-header">
+      <div class="brand-logo" style="background:#22c55e;box-shadow:0 8px 24px rgba(34,197,94,0.4)">🚀</div>
+      <h1 class="brand-title">Login Berhasil!</h1>
+      <p class="brand-slogan">${cfg.name}</p>
+    </div>
+
+    <div class="${cardClass}" style="text-align:center;padding:32px 20px">
+      <div style="font-size:36px;margin-bottom:12px">⚡</div>
+      <h2 style="font-size:16px;font-weight:800;color:var(--text);margin-bottom:6px">Sedang Mengalihkan...</h2>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.5">
+        Akun Anda telah aktif. Anda sekarang memiliki akses penuh ke jaringan internet.
+      </p>
+      <a href="$(link-redirect)" class="btn btn-login">
+        KLIK DI SINI JIKA TIDAK DIALIHKAN OTOMATIS
+      </a>
+    </div>
+
+    <div class="footer-contact">
+      <div class="copyright">&copy; 2026 ${cfg.name} · Powered by MikroTik RouterOS</div>
+    </div>
+  </div>
+</body>
+</html>`;
+  }
+
+  // Generates offline, self-contained style.css
   function getHotspotCssCode() {
     const cfg = getHotspotConfig();
     const c = cfg.c;
+    const r = cfg.radius === 'pill' ? { card: '24px', btn: '20px', sm: '12px' } : (cfg.radius === 'sharp' ? { card: '4px', btn: '3px', sm: '2px' } : { card: '16px', btn: '10px', sm: '8px' });
+
     return `/* MikroTik Captive Portal Stylesheet - Generated by ComitTools PRO */
+:root {
+  --primary: ${c.primary};
+  --hover: ${c.hover};
+  --bg: ${c.bg};
+  --card-bg: ${c.card};
+  --card-glass: ${c.glass};
+  --text: ${c.text};
+  --muted: ${c.muted};
+  --border: ${c.border};
+  --accent: ${c.accent};
+  --glow: ${c.glow};
+  --radius-card: ${r.card};
+  --radius-btn: ${r.btn};
+  --radius-sm: ${r.sm};
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  background: ${c.bg};
-  color: ${c.text};
+  background: var(--bg);
+  color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 24px 14px;
+  line-height: 1.5;
 }
+
 .portal-wrapper {
   width: 100%;
-  max-width: 410px;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+/* Model Split Screen */
+.portal-wrapper.model-split-screen {
+  max-width: 860px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: stretch;
+}
+.split-col {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
+@media (max-width: 720px) {
+  .portal-wrapper.model-split-screen {
+    flex-direction: column;
+    max-width: 420px;
+  }
+}
+
+/* Model Minimal Flat */
+.model-minimal-flat .card {
+  box-shadow: none !important;
+  border-width: 1px !important;
+}
+
+/* Model Voucher First */
+.code-large {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  letter-spacing: 3px !important;
+  padding: 14px !important;
+}
+
+/* Model Cafe & Lounge */
+.cafe-badge {
+  display: inline-block;
+  background: rgba(217, 119, 6, 0.15);
+  border: 1px solid rgba(217, 119, 6, 0.3);
+  color: #f59e0b;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
+
+/* Brand Header */
 .brand-header { text-align: center; }
 .brand-logo {
-  width: 54px; height: 54px;
-  background: ${c.primary};
-  border-radius: 16px;
+  width: 56px; height: 56px;
+  background: var(--primary);
+  border-radius: var(--radius-card);
   display: inline-flex; align-items: center; justify-content: center;
-  font-size: 24px; color: #fff;
-  box-shadow: 0 8px 24px ${c.primary}55;
+  font-size: 26px; color: #fff;
+  box-shadow: 0 8px 24px var(--glow);
   margin-bottom: 10px;
 }
-.brand-title { font-size: 20px; font-weight: 800; color: ${c.text}; margin-bottom: 4px; }
-.brand-slogan { font-size: 12px; color: ${c.muted}; }
+.brand-title { font-size: 21px; font-weight: 800; color: var(--text); margin-bottom: 4px; line-height: 1.2; }
+.brand-slogan { font-size: 12px; color: var(--muted); }
 
-.marquee-box {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid ${c.border};
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 11px;
-  color: ${c.accent};
+/* Card Styles */
+.card {
+  border-radius: var(--radius-card);
+  padding: 22px 20px;
+  transition: all .2s;
+}
+.card-glassmorphism {
+  background: var(--card-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+.card-solid {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 36px rgba(0,0,0,0.6);
+}
+.card-outline {
+  background: var(--card-bg);
+  border: 1.5px solid var(--primary);
+  box-shadow: 0 0 24px var(--glow);
 }
 
+/* Announcement Marquee */
+.marquee-box {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 11px;
+  color: var(--accent);
+}
+
+/* Error Box */
 .alert-error {
   background: rgba(239,68,68,0.15);
   border: 1px solid rgba(239,68,68,0.3);
   color: #f87171;
   font-size: 12px;
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   text-align: center;
 }
 
-.login-card {
-  background: ${c.card};
-  border: 1px solid ${c.border};
-  border-radius: 20px;
-  padding: 24px 20px;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
-}
-
+/* Tabs */
 .login-tabs {
   display: flex;
   background: rgba(0,0,0,0.25);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   padding: 4px;
   margin-bottom: 18px;
-  border: 1px solid ${c.border};
+  border: 1px solid var(--border);
 }
 .tab-btn {
   flex: 1; padding: 9px;
-  border: none; border-radius: 7px;
+  border: none; border-radius: var(--radius-sm);
   background: transparent;
-  color: ${c.muted};
+  color: var(--muted);
   font-size: 12px; font-weight: 700;
   cursor: pointer; transition: all .2s;
 }
 .tab-btn.active {
-  background: ${c.primary};
+  background: var(--primary);
   color: #fff;
-  box-shadow: 0 3px 12px ${c.primary}44;
+  box-shadow: 0 3px 12px var(--glow);
 }
 
+/* Form Controls */
 .form-group { margin-bottom: 14px; }
-.form-label { display: block; font-size: 11px; font-weight: 700; color: ${c.muted}; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+.form-label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
 .form-input {
   width: 100%; padding: 12px 14px;
   background: rgba(0,0,0,0.25);
-  border: 1px solid ${c.border};
-  border-radius: 10px;
-  color: ${c.text};
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  color: var(--text);
   font-size: 14px; outline: none;
   transition: border-color .2s, box-shadow .2s;
 }
-.form-input:focus { border-color: ${c.primary}; box-shadow: 0 0 0 3px ${c.primary}33; }
+.form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--glow); }
 .form-code { text-align: center; font-weight: 800; letter-spacing: 2px; font-size: 15px; text-transform: uppercase; }
-.form-help { display: block; font-size: 10px; color: ${c.muted}; margin-top: 4px; }
+.form-help { display: block; font-size: 10px; color: var(--muted); margin-top: 4px; }
 
+/* Buttons */
 .btn {
   width: 100%; padding: 13px;
-  border: none; border-radius: 10px;
-  font-size: 14px; font-weight: 800;
+  border: none; border-radius: var(--radius-btn);
+  font-size: 13px; font-weight: 800;
   cursor: pointer; transition: all .2s;
   text-decoration: none; display: block; text-align: center;
+  box-sizing: border-box;
 }
-.btn-login { background: ${c.primary}; color: #fff; box-shadow: 0 6px 20px ${c.primary}44; margin-top: 6px; }
-.btn-login:hover { background: ${c.hover}; transform: translateY(-1px); }
+.btn-login { background: var(--primary); color: #fff; box-shadow: 0 6px 20px var(--glow); margin-top: 6px; }
+.btn-login:hover { background: var(--hover); transform: translateY(-1px); }
 .btn-trial {
   background: rgba(255,255,255,0.05);
-  border: 1px solid ${c.border};
-  color: ${c.accent};
+  border: 1px solid var(--border);
+  color: var(--accent);
   font-size: 12px; margin-top: 10px;
 }
 .btn-trial:hover { background: rgba(255,255,255,0.08); }
-.btn-logout { background: #ef4444; color: #fff; margin-top: 14px; }
+.btn-logout { background: #ef4444; color: #fff; box-shadow: 0 6px 18px rgba(239,68,68,0.3); }
+.btn-logout:hover { background: #dc2626; }
 
-.card-pricing {
-  background: ${c.card};
-  border: 1px solid ${c.border};
-  border-radius: 16px;
-  padding: 16px;
+/* Payment Note & Rules */
+.payment-note {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  font-size: 11px;
+  text-align: center;
 }
-.pricing-title { font-size: 12px; font-weight: 800; color: ${c.muted}; text-transform: uppercase; margin-bottom: 10px; text-align: center; }
+.rules-accordion {
+  margin-top: 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.rules-accordion summary { font-weight: 700; color: var(--text); outline: none; }
+.rules-body { margin-top: 8px; line-height: 1.5; color: var(--muted); border-top: 1px solid var(--border); padding-top: 8px; }
+
+/* Pricing Table */
+.card-pricing { padding: 18px; }
+.pricing-title { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; text-align: center; }
 .pricing-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
 .price-item {
   display: flex; justify-content: space-between; align-items: center;
   background: rgba(255,255,255,0.03);
-  border: 1px solid ${c.border};
-  border-radius: 8px; padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 12px;
   font-size: 12px;
 }
-.price-dur { font-weight: 700; color: ${c.text}; }
-.price-val { font-weight: 800; color: ${c.primary}; }
-.price-spd { font-size: 10px; color: ${c.muted}; }
+.price-dur { font-weight: 700; color: var(--text); }
+.price-val { font-weight: 800; color: var(--primary); }
+.price-spd { font-size: 10px; color: var(--muted); }
 
+/* Footer & WhatsApp */
 .footer-contact { text-align: center; margin-top: 4px; }
 .btn-wa {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -2292,12 +2710,13 @@ body {
   border: 1px solid rgba(34,197,94,0.2);
 }
 .btn-wa:hover { background: rgba(34,197,94,0.15); }
-.copyright { font-size: 10px; color: ${c.muted}; margin-top: 10px; }
+.copyright { font-size: 10px; color: var(--muted); margin-top: 10px; }
 
+/* Status Page Table */
 .status-table { display: flex; flex-direction: column; gap: 8px; font-size: 12px; }
-.status-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid ${c.border}; }
-.status-row.highlight { font-size: 14px; font-weight: 800; border-color: ${c.primary}; }
-code { font-family: monospace; color: ${c.accent}; }
+.status-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.status-row.highlight { font-size: 13px; font-weight: 800; border-color: var(--primary); }
+code { font-family: monospace; color: var(--accent); }
 `;
   }
 
@@ -2355,30 +2774,57 @@ function binl2hex(binarray){ var hex_tab = hexcase ? "0123456789ABCDEF" : "01234
 `;
   }
 
-  // Lightweight, debounced preview engine for Hotspot Login Page Maker
+  // Multi-page live preview state
+  let currentHotspotPage = 'login';
   let hotspotDebounceTimer = null;
 
   function renderHotspotLivePreview() {
     const iframe = document.getElementById('pt_hs_live_iframe');
     if (!iframe) return;
     try {
-      let code = getHotspotHtmlCode();
+      let code = '';
+      if (currentHotspotPage === 'status') {
+        code = getHotspotStatusHtmlCode();
+      } else if (currentHotspotPage === 'expired') {
+        code = getHotspotExpiredHtmlCode();
+      } else if (currentHotspotPage === 'logout') {
+        code = getHotspotLogoutHtmlCode();
+      } else {
+        code = getHotspotHtmlCode();
+      }
+
       const css = getHotspotCssCode();
-      // Inject css inline for iframe preview
+      // Inject CSS inline for safe iframe rendering
       code = code.replace('<link rel="stylesheet" href="style.css">', `<style>${css}</style>`);
       // Mock md5.js to avoid 404 network errors in iframe preview
       code = code.replace('<script src="md5.js"></script>', '<script>window.hex_md5=function(s){return s;};</script>');
-      // Replace template markers for live preview demo
+
+      // Replace template markers with realistic live preview demo data
       code = code.replace(/\$\(if error\)[\s\S]*?\$\(endif\)/g, '');
       code = code.replace(/\$\(if chap-id\)[\s\S]*?\$\(endif\)/g, '');
       code = code.replace(/\$\(chap-id\)/g, '');
       code = code.replace(/\$\(chap-challenge\)/g, '');
       code = code.replace(/\$\(username\)/g, 'VOUCH-789');
+      code = code.replace(/\$\(ip\)/g, '192.168.88.25');
+      code = code.replace(/\$\(mac\)/g, 'D4:6E:0E:12:34:56');
+      code = code.replace(/\$\(uptime\)/g, '01:45:20');
+      code = code.replace(/\$\(session-time-left\)/g, '04:14:40');
+      code = code.replace(/\$\(bytes-out-nice\)/g, '45.2 MB');
+      code = code.replace(/\$\(bytes-in-nice\)/g, '328.6 MB');
+      code = code.replace(/\$\(remain-bytes-total-nice\)/g, '1.67 GB');
       code = code.replace(/\$\(link-login-only\)/g, '#');
+      code = code.replace(/\$\(link-login\)/g, '#');
+      code = code.replace(/\$\(link-logout\)/g, '#');
+      code = code.replace(/\$\(link-status\)/g, '#');
+      code = code.replace(/\$\(link-redirect\)/g, '#');
       code = code.replace(/\$\(link-orig\)/g, '#');
       code = code.replace(/\$\(link-orig-esc\)/g, '#');
       code = code.replace(/\$\(mac-esc\)/g, '00:11:22:33:44:55');
+      code = code.replace(/\$\(refresh-timeout\)/g, '60');
       code = code.replace(/\$\(if trial == 'yes'\)([\s\S]*?)\$\(endif\)/g, '$1');
+      code = code.replace(/\$\(if session-time-left\)([\s\S]*?)\$\(endif\)/g, '$1');
+      code = code.replace(/\$\(if remain-bytes-total-nice\)([\s\S]*?)\$\(endif\)/g, '$1');
+
       iframe.srcdoc = code;
     } catch (e) {
       console.warn('Hotspot preview render error:', e);
@@ -2396,28 +2842,45 @@ function binl2hex(binarray){ var hex_tab = hexcase ? "0123456789ABCDEF" : "01234
     }, 120);
   }
 
-  function switchHotspotTab(tab) {
-    const pBtn = document.getElementById('pt_tab_hs_preview');
-    const sBtn = document.getElementById('pt_tab_hs_script');
+  function switchHotspotPage(page) {
     const iframeWrap = document.getElementById('pt_hs_iframe_wrap');
     const viewportCtrl = document.getElementById('pt_hs_viewport_controls');
     const terminalOut = document.getElementById('pt_output');
     const terminalHdr = terminalOut?.previousElementSibling;
 
-    if (tab === 'preview') {
-      if (pBtn) { pBtn.className = 'btn btn-teal btn-sm'; }
-      if (sBtn) { sBtn.className = 'btn btn-secondary btn-sm'; }
-      if (iframeWrap) iframeWrap.style.display = 'flex';
-      if (viewportCtrl) viewportCtrl.style.display = 'flex';
-      if (terminalOut) terminalOut.style.display = 'none';
-      if (terminalHdr) terminalHdr.style.display = 'none';
-    } else {
-      if (pBtn) { pBtn.className = 'btn btn-secondary btn-sm'; }
-      if (sBtn) { sBtn.className = 'btn btn-teal btn-sm'; }
+    ['login', 'status', 'expired', 'logout', 'script'].forEach(p => {
+      const btn = document.getElementById(`pt_btn_page_${p}`);
+      if (btn) {
+        if (p === page) {
+          btn.className = 'btn btn-teal btn-xs';
+          btn.style.fontWeight = '700';
+        } else {
+          btn.className = 'btn btn-secondary btn-xs';
+          btn.style.fontWeight = 'normal';
+        }
+      }
+    });
+
+    if (page === 'script') {
       if (iframeWrap) iframeWrap.style.display = 'none';
       if (viewportCtrl) viewportCtrl.style.display = 'none';
       if (terminalOut) terminalOut.style.display = 'block';
       if (terminalHdr) terminalHdr.style.display = 'flex';
+    } else {
+      currentHotspotPage = page;
+      if (iframeWrap) iframeWrap.style.display = 'flex';
+      if (viewportCtrl) viewportCtrl.style.display = 'flex';
+      if (terminalOut) terminalOut.style.display = 'none';
+      if (terminalHdr) terminalHdr.style.display = 'none';
+      renderHotspotLivePreview();
+    }
+  }
+
+  function switchHotspotTab(tab) {
+    if (tab === 'script') {
+      switchHotspotPage('script');
+    } else {
+      switchHotspotPage('login');
     }
   }
 
@@ -2428,38 +2891,54 @@ function binl2hex(binarray){ var hex_tab = hexcase ? "0123456789ABCDEF" : "01234
     }
   }
 
-  // Full ZIP download with JSZip
+  // Full ZIP download bundling all 9 files
   async function downloadHotspotZip() {
     const cfg = getHotspotConfig();
     const loginHtml = getHotspotHtmlCode();
     const statusHtml = getHotspotStatusHtmlCode();
     const logoutHtml = getHotspotLogoutHtmlCode();
+    const expiredHtml = getHotspotExpiredHtmlCode();
+    const aloginHtml = getHotspotAloginHtmlCode();
     const styleCss = getHotspotCssCode();
     const md5Js = getHotspotMd5Code();
     const rscScript = document.getElementById('pt_output')?.value || proToolDefs['hotspot-login-page-maker'].generate({}, 'v7');
 
     const readme = `================================================================
-CARA MEMASANG TEMPLATE HOTSPOT DI MIKROTIK ROUTEROS
-Template : ${cfg.name}
-Generated: ComitTools PRO (${new Date().toLocaleString('id-ID')})
+CARA MEMASANG PAKET TEMPLATE HOTSPOT DI MIKROTIK ROUTEROS
+Template  : ${cfg.name}
+Model     : ${cfg.model}
+Tema      : ${cfg.theme} (${cfg.cardStyle})
+Generated : ComitTools PRO (${new Date().toLocaleString('id-ID')})
 ================================================================
 
-LANGKAH 1: UPLOAD KE MIKROTIK
-1. Ekstrak file ZIP ini di komputer Anda.
-2. Buka aplikasi Winbox -> Hubungkan ke Router MikroTik Anda.
+BERKAS DI DALAM PAKET ZIP INI:
+1. login.html       - Halaman portal login (Voucher & Member, Trial, Pricing)
+2. status.html      - Halaman informasi status koneksi, kuota, uptime, & logout
+3. expired.html     - Halaman pemberitahuan masa aktif / kuota voucher habis
+4. logout.html      - Halaman konfirmasi setelah user mengakhiri sesi internet
+5. alogin.html      - Halaman auto-redirect setelah autentikasi berhasil
+6. style.css        - Stylesheet mandiri (offline, 100% tanpa butuh internet)
+7. md5.js           - Script enkripsi CHAP resmi MikroTik RouterOS
+8. hotspot-setup.rsc- Script konfigurasi router otomatis (DNS & Walled Garden)
+9. README-CARA-PASANG.txt - Dokumen panduan ini
+
+LANGKAH 1: UPLOAD FOLDER KE ROUTER MIKROTIK
+1. Ekstrak file ZIP ini di komputer / laptop Anda.
+2. Buka aplikasi Winbox -> Hubungkan (Connect) ke Router MikroTik Anda.
 3. Buka menu [Files] di bilah kiri Winbox.
 4. Drag & Drop folder "hotspot/" dari komputer ke dalam jendela Files Winbox.
-   (Pastikan folder bernama "hotspot" berada di root folder router).
+   (Pastikan folder bernama "hotspot" berada langsung di root directory router).
 
 LANGKAH 2: EKSEKUSI SCRIPT ROUTEROS
 1. Buka menu [New Terminal] di Winbox.
-2. Buka file "hotspot-setup.rsc" dengan Notepad, lalu Copy seluruh isinya.
-3. Paste ke dalam Terminal Winbox, lalu tekan Enter.
-4. Selesai! Login portal hotspot Anda kini telah aktif.
+2. Buka file "hotspot-setup.rsc" dengan Notepad, lalu Copy (Ctrl+A, Ctrl+C).
+3. Paste ke dalam jendela Terminal Winbox, lalu tekan tombol Enter.
+4. Selesai! Login portal hotspot Anda langsung aktif dan siap digunakan.
 
-TIPS:
-- URL Portal default: http://${cfg.dns}
-- CS WhatsApp bantuan: ${cfg.wa}
+CATATAN PENTING:
+- URL Portal Hotspot: http://${cfg.dns}
+- Layanan Bantuan CS: ${cfg.wa}
+- Semua halaman sudah terintegrasi dan responsif untuk Smartphone, Tablet & Laptop.
 ================================================================`;
 
     const JSZipLib = (typeof JSZip !== 'undefined') ? JSZip : (typeof window !== 'undefined' ? window.JSZip : null);
@@ -2471,6 +2950,8 @@ TIPS:
         folder.file("login.html", loginHtml);
         folder.file("status.html", statusHtml);
         folder.file("logout.html", logoutHtml);
+        folder.file("expired.html", expiredHtml);
+        folder.file("alogin.html", aloginHtml);
         folder.file("style.css", styleCss);
         folder.file("md5.js", md5Js);
         folder.file("hotspot-setup.rsc", rscScript);
@@ -2478,7 +2959,7 @@ TIPS:
 
         const content = await zip.generateAsync({ type: "blob" });
         const cleanName = cfg.name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
-        const fileName = `hotspot-template-${cleanName || 'portal'}.zip`;
+        const fileName = `hotspot-bundle-${cleanName || 'portal'}.zip`;
 
         const a = document.createElement('a');
         a.href = URL.createObjectURL(content);
@@ -2509,6 +2990,48 @@ TIPS:
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     showToast('📥 Berhasil mendownload login.html! Siap diupload ke folder hotspot router.', 'success');
+  }
+
+  function downloadHotspotStatusHtml() {
+    const code = getHotspotStatusHtmlCode();
+    const blob = new Blob([code], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'status.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('📥 Berhasil mendownload status.html!', 'success');
+  }
+
+  function downloadHotspotExpiredHtml() {
+    const code = getHotspotExpiredHtmlCode();
+    const blob = new Blob([code], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'expired.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('📥 Berhasil mendownload expired.html!', 'success');
+  }
+
+  function downloadHotspotLogoutHtml() {
+    const code = getHotspotLogoutHtmlCode();
+    const blob = new Blob([code], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'logout.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('📥 Berhasil mendownload logout.html!', 'success');
   }
 
   function previewHotspotHtml() {
@@ -2600,10 +3123,14 @@ TIPS:
     setAiPrompt,
     setLogSample,
     downloadHotspotHtml,
+    downloadHotspotStatusHtml,
+    downloadHotspotExpiredHtml,
+    downloadHotspotLogoutHtml,
     downloadHotspotZip,
     previewHotspotHtml,
     updateHotspotLivePreview,
     switchHotspotTab,
+    switchHotspotPage,
     setHotspotIframeWidth,
     printVoucherCard,
     downloadQrSvg
